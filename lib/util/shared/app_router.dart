@@ -3,7 +3,7 @@ import 'package:cruise/presentation/email_verification_code/email_verification_c
 import 'package:cruise/presentation/forget_password/forget_password_screen.dart';
 import 'package:cruise/presentation/lobby/lobby_screen.dart';
 import 'package:go_router/go_router.dart';
-import '../../presentation/register/register_screen.dart';
+import '../../presentation/register/views/register_screen.dart';
 import '../../presentation/login/login_screen.dart';
 
 abstract class AppRouter {

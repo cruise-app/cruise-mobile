@@ -1,7 +1,6 @@
-import 'package:cruise/util/shared/colors.dart';
-import 'package:cruise/util/shared/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+
 class BottomAlternative extends StatelessWidget {
   const BottomAlternative({
     super.key,

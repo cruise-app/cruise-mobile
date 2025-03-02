@@ -1,4 +1,3 @@
-import 'package:cruise/main.dart';
 import 'package:cruise/util/responsive_manager/responsive_init.dart';
 import 'package:cruise/util/shared/app_router.dart';
 import 'package:cruise/util/shared/widgets.dart';
