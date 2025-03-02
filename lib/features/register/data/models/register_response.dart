@@ -1,6 +1,6 @@
 class RegisterResponse {
   final String message;
-  final String userId;
+  final int userId;
 
   RegisterResponse({
     required this.message,
