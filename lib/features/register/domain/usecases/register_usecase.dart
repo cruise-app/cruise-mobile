@@ -1,6 +1,6 @@
-import 'package:cruise/presentation/register/data/models/register_request.dart';
-import 'package:cruise/presentation/register/data/models/register_response.dart';
-import 'package:cruise/presentation/register/domain/repo/register_repo.dart';
+import 'package:cruise/features/register/data/models/register_request.dart';
+import 'package:cruise/features/register/data/models/register_response.dart';
+import 'package:cruise/features/register/domain/repo/register_repo.dart';
 
 class RegisterUsecase {
   final RegisterRepo repository;

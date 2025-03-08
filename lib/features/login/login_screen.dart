@@ -1,4 +1,4 @@
-import 'package:cruise/presentation/login/widgets/bottom_alternative.dart';
+import 'package:cruise/features/login/widgets/bottom_alternative.dart';
 import 'package:cruise/util/responsive_manager/responsive_init.dart';
 import 'package:cruise/util/shared/app_router.dart';
 import 'package:cruise/util/shared/colors.dart';
@@ -93,7 +93,8 @@ class LoginScreen extends StatelessWidget {
                         BottomAlternative(
                             question: "Forgot Password",
                             message: '',
-                            action: () => GoRouter.of(context).push(AppRouter.kForgetPasswordScreen)),
+                            action: () => GoRouter.of(context)
+                                .push(AppRouter.kForgetPasswordScreen)),
                       ],
                     ),
                     const SizedBox(
@@ -130,7 +131,7 @@ class LoginScreen extends StatelessWidget {
                       padding: const EdgeInsets.only(bottom: 20),
                       child: ActionButton(
                         prefixIcon:
-                        SvgPicture.asset('assets/svgs/google_icon.svg'),
+                            SvgPicture.asset('assets/svgs/google_icon.svg'),
                         height: 50,
                         message: 'Continue with Google',
                         action: () {},
@@ -142,7 +143,7 @@ class LoginScreen extends StatelessWidget {
                     ),
                     ActionButton(
                       prefixIcon:
-                      SvgPicture.asset('assets/svgs/apple_icon.svg'),
+                          SvgPicture.asset('assets/svgs/apple_icon.svg'),
                       height: 50,
                       message: 'Continue with Apple',
                       action: () {},
@@ -155,9 +156,9 @@ class LoginScreen extends StatelessWidget {
                       height: 25,
                     ),
                     BottomAlternative(
-                        question: "Don't have an account",
-                        message: 'Sign up',
-                        action: () => {},
+                      question: "Don't have an account",
+                      message: 'Sign up',
+                      action: () => {},
                     ),
                   ],
                 ),

@@ -1,6 +1,6 @@
-import 'package:cruise/presentation/register/data/models/register_request.dart';
-import 'package:cruise/presentation/register/data/models/register_response.dart';
-import 'package:cruise/presentation/register/data/services/register_service.dart';
+import 'package:cruise/features/register/data/models/register_request.dart';
+import 'package:cruise/features/register/data/models/register_response.dart';
+import 'package:cruise/features/register/data/services/register_service.dart';
 
 class RegisterRepo {
   final RegisterService registerService;

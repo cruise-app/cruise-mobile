@@ -1,7 +1,8 @@
-import 'package:cruise/presentation/register/data/services/register_service.dart';
-import 'package:cruise/presentation/register/domain/repo/register_repo.dart';
-import 'package:cruise/presentation/register/domain/usecases/register_usecase.dart';
-import 'package:cruise/presentation/register/manager/register_bloc.dart';
+import 'package:cruise/features/register/data/services/register_service.dart';
+import 'package:cruise/features/register/domain/repo/register_repo.dart';
+import 'package:cruise/features/register/domain/usecases/register_usecase.dart';
+import 'package:cruise/features/register/domain/usecases/verification_usecase.dart';
+import 'package:cruise/features/register/presentation/manager/register_bloc.dart';
 import 'package:cruise/util/responsive_manager/responsive_init.dart';
 import 'package:cruise/util/shared/api_service.dart';
 import 'package:cruise/util/shared/app_router.dart';
@@ -61,16 +62,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   void _register(BuildContext context) {
-    print(firstNameController.text.trim());
-    print(selectedMonth);
-    print(selectedDay);
-    print(selectedYear);
-    print(selectedGender);
-    print(secondNameController.text.trim());
-    print(passwordController.text.trim());
-    print(confirmPasswordController.text.trim());
-    print(emailController.text.trim());
-    print("$selectedCountryCode${phoneController.text.trim()}");
     if (firstNameController.text.trim().isEmpty ||
         secondNameController.text.trim().isEmpty ||
         passwordController.text.trim().isEmpty ||
@@ -109,8 +100,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
             horizontal: context.responsive.pageLayoutHorizontalPadding,
             vertical: 18),
         child: BlocProvider(
-          create: (context) => RegisterBloc(RegisterUsecase(
-              RegisterRepo(RegisterService(ApiService(Dio()))))),
+          create: (context) => RegisterBloc(
+              RegisterUsecase(RegisterRepo(RegisterService(ApiService(Dio())))),
+              VerificationUsecase(RegisterService(ApiService(Dio())))),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -125,11 +117,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ],
               ),
               const SizedBox(height: 20),
-              Text('Set up your profile',
-                  style: GoogleFonts.poppins(
-                    fontSize: 28,
-                    fontWeight: FontWeight.w600,
-                  )),
+              Text(
+                'Set up your profile',
+                style: GoogleFonts.poppins(
+                  fontSize: 28,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+
               const SizedBox(height: 30),
               Row(
                 children: [
@@ -150,10 +145,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
               Row(
                 children: [
                   Expanded(
-                      child: CustomTextField(
-                    hint: 'Password',
-                    controller: passwordController,
-                  )),
+                    child: CustomTextField(
+                      hint: 'Password',
+                      controller: passwordController,
+                    ),
+                  ),
                   const SizedBox(width: 10),
                   Expanded(
                       child: CustomTextField(
@@ -162,9 +158,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   )),
                 ],
               ),
-              SizedBox(height: 15),
-              CustomTextField(hint: 'Email', controller: emailController),
               const SizedBox(height: 15),
+              CustomTextField(hint: 'Email', controller: emailController),
               const SizedBox(height: 15),
               Row(
                 children: [
@@ -251,7 +246,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     width: double.infinity,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: (state is RegisterLoading)
+                        backgroundColor: (state is RegisterLoadingState)
                             ? Colors.grey
                             : Colors.black,
                         padding: const EdgeInsets.symmetric(vertical: 15),
@@ -259,9 +254,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
-                      onPressed: () => _register(context),
+                      onPressed: () => {
+                        _register(context),
+                        GoRouter.of(context)
+                            .push(AppRouter.kRegisterVerificationScreen)
+                      },
                       child: Text(
-                        (state is RegisterLoading) ? 'Loading...' : 'Sign Up',
+                        (state is RegisterLoadingState)
+                            ? 'Loading...'
+                            : 'Sign Up',
                         style:
                             const TextStyle(color: Colors.white, fontSize: 16),
                       ),
@@ -271,10 +272,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
               BlocBuilder<RegisterBloc, RegisterState>(
                   builder: (context, state) {
-                if (state is RegisterFailure) {
+                if (state is RegisterFailureState) {
                   print(state.message);
                 }
-                if (state is RegisterSuccess) {
+                if (state is RegisterSuccessState) {
                   print(state.message);
                 }
                 return const SizedBox.shrink();

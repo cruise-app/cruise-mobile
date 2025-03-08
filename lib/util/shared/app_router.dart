@@ -1,10 +1,11 @@
-import 'package:cruise/presentation/create_password/create_password_screen.dart';
-import 'package:cruise/presentation/email_verification_code/email_verification_code_screen.dart';
-import 'package:cruise/presentation/forget_password/forget_password_screen.dart';
-import 'package:cruise/presentation/lobby/lobby_screen.dart';
+import 'package:cruise/features/create_password/create_password_screen.dart';
+import 'package:cruise/features/email_verification_code/email_verification_code_screen.dart';
+import 'package:cruise/features/forget_password/forget_password_screen.dart';
+import 'package:cruise/features/lobby/lobby_screen.dart';
+import 'package:cruise/features/register/presentation/views/register_verification_screen.dart';
 import 'package:go_router/go_router.dart';
-import '../../presentation/register/views/register_screen.dart';
-import '../../presentation/login/login_screen.dart';
+import '../../features/register/presentation/views/register_screen.dart';
+import '../../features/login/login_screen.dart';
 
 abstract class AppRouter {
   static const kLobbyScreen = '/';
@@ -13,6 +14,7 @@ abstract class AppRouter {
   static const kForgetPasswordScreen = '/ForgetPasswordScreen';
   static const kEmailVerificationCodeScreen = '/EmailVerificationCodeScreen';
   static const kCreatePasswordScreen = '/CreatePasswordScreen';
+  static const kRegisterVerificationScreen = '/RegisterVerificationScreen';
 
   static final GoRouter router = GoRouter(
     routes: [
@@ -39,7 +41,10 @@ abstract class AppRouter {
       GoRoute(
         path: kCreatePasswordScreen,
         builder: (context, state) => const CreatePasswordScreen(),
-      )
+      ),
+      GoRoute(
+          path: kRegisterVerificationScreen,
+          builder: (context, state) => const RegisterVerificationScreen())
     ],
   );
 }

@@ -27,3 +27,15 @@ class RegisterSubmitted extends RegisterEvent {
       required this.day,
       required this.year});
 }
+
+class EmailVerificationSubmitted extends RegisterEvent {
+  final String email;
+
+  EmailVerificationSubmitted(this.email);
+}
+
+class PhoneVerificationSubmitted extends RegisterEvent {
+  final String phoneNumber;
+
+  PhoneVerificationSubmitted(this.phoneNumber);
+}
