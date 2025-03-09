@@ -6,6 +6,7 @@ import 'package:cruise/util/shared/widgets/page_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+// ignore: must_be_immutable
 class RegisterStepThree extends StatelessWidget {
   RegisterStepThree(
       {super.key,
@@ -57,13 +58,13 @@ class RegisterStepThree extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 RegisterActionButton(
-                  action: () => Navigator.pop(context),
+                  action: onPrevious,
                   message: "Back",
                   color: Colors.grey,
                   size: MediaQuery.of(context).size.width * 0.4,
                 ),
                 RegisterActionButton(
-                  action: () => onNext,
+                  action: onNext,
                   message: 'Verify',
                   size: MediaQuery.of(context).size.width * 0.4,
                 )

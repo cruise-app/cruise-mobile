@@ -1,7 +1,6 @@
 import 'package:cruise/features/register/presentation/views/widgets/action_button.dart';
 import 'package:cruise/util/responsive_manager/responsive_init.dart';
 import 'package:cruise/util/shared/colors.dart';
-import 'package:cruise/util/shared/widgets.dart';
 import 'package:cruise/util/shared/widgets/custom_appbar.dart';
 import 'package:cruise/util/shared/widgets/custom_text_field.dart';
 import 'package:cruise/util/shared/widgets/go_back_button.dart';

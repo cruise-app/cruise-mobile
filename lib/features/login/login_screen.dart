@@ -37,7 +37,7 @@ class LoginScreen extends StatelessWidget {
                       AuthSwitcherButton(
                         message: 'Sign Up',
                         action: () => GoRouter.of(context)
-                            .pushReplacement(AppRouter.kRegisterScreen),
+                            .pushReplacement(AppRouter.kRegisterFlow),
                       ),
                     ],
                   ),

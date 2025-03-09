@@ -2,12 +2,15 @@ import 'package:cruise/features/register/presentation/views/verification_screen.
 import 'package:cruise/features/register/presentation/views/widgets/register_step_one.dart';
 import 'package:cruise/features/register/presentation/views/widgets/register_step_three.dart';
 import 'package:cruise/features/register/presentation/views/widgets/register_step_two.dart';
+import 'package:cruise/util/shared/app_router.dart';
 import 'package:flutter/material.dart';
-
-import 'phone_verification_screen.dart';
+import 'package:go_router/go_router.dart';
 
 class RegisterFlowScreen extends StatefulWidget {
+  const RegisterFlowScreen({super.key});
+
   @override
+  // ignore: library_private_types_in_public_api
   _RegisterFlowScreenState createState() => _RegisterFlowScreenState();
 }
 
@@ -45,7 +48,7 @@ class _RegisterFlowScreenState extends State<RegisterFlowScreen> {
     print("DOB: \$selectedMonth-\$selectedDay-\$selectedYear");
     print("Email: \${emailController.text}");
     print("Phone: \${phoneController.text}");
-
+    GoRouter.of(context).push(AppRouter.kLoginScreen);
     // TODO: Trigger Bloc event or API call to store user data
   }
 
@@ -76,8 +79,8 @@ class _RegisterFlowScreenState extends State<RegisterFlowScreen> {
       VerificationScreen(
         onPrevious: previousStep,
         onNext: nextStep,
-        title: '',
-        subtitle: '',
+        title: 'Verify your email',
+        subtitle: 'Enter the 4-digit code sent to your email',
       ),
       RegisterStepThree(
         phoneController: phoneController,
@@ -88,8 +91,8 @@ class _RegisterFlowScreenState extends State<RegisterFlowScreen> {
       VerificationScreen(
         onPrevious: previousStep,
         onNext: completeRegistration,
-        title: '',
-        subtitle: '',
+        title: 'Verify your phone',
+        subtitle: 'Enter the 4-digit code sent to your phone',
       ),
     ];
 

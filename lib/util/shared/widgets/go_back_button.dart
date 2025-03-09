@@ -1,4 +1,3 @@
-import 'package:cruise/features/lobby/lobby_screen.dart';
 import 'package:cruise/util/responsive_manager/responsive_init.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

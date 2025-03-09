@@ -1,4 +1,3 @@
-import 'package:cruise/features/register/presentation/views/widgets/register_step_one.dart';
 import 'package:cruise/util/shared/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';

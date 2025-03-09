@@ -13,7 +13,6 @@ import '../../features/login/login_screen.dart';
 abstract class AppRouter {
   static const kLobbyScreen = '/';
   static const kRegisterFlow = '/RegisterFlow';
-  static const kRegisterScreen = '/RegisterScreen';
   static const kEmailVerificationScreen = '/RegisterVerificationScreen';
   static const kPhoneVerificationScreen = '/PhoneVerificationScreen';
   static const kLoginScreen = '/LoginScreen';
