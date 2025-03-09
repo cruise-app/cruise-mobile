@@ -1,3 +1,4 @@
+import 'package:cruise/features/register/presentation/views/widgets/register_step_one.dart';
 import 'package:cruise/util/shared/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -31,7 +32,8 @@ class ActionButton extends StatelessWidget {
           color: color ?? MyColors.lightYellow,
           borderRadius: BorderRadius.circular(10),
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 16), // Add padding for the icon
+        padding: const EdgeInsets.symmetric(
+            horizontal: 16), // Add padding for the icon
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -60,5 +62,3 @@ class ActionButton extends StatelessWidget {
     );
   }
 }
-
-

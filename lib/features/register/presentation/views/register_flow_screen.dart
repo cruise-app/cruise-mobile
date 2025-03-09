@@ -1,7 +1,8 @@
+import 'package:cruise/features/register/presentation/views/widgets/register_step_one.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cruise/features/register/presentation/manager/register_bloc.dart';
-import 'package:cruise/features/register/presentation/views/email_verification_screen.dart';
+import 'package:cruise/features/register/presentation/views/verification_screen.dart';
 import 'package:cruise/features/register/presentation/views/phone_verification_screen.dart';
 import 'package:cruise/features/register/presentation/views/register_screen.dart';
 
@@ -15,12 +16,6 @@ class RegisterFlowScreen extends StatelessWidget {
         List<Page> pages = [
           const MaterialPage(child: RegisterScreen()),
         ];
-
-        if (state is EmailVerificationState) {
-          pages.add(const MaterialPage(child: EmailVerificationScreen()));
-        } else if (state is PhoneVerificationState) {
-          pages.add(const MaterialPage(child: PhoneVerificationScreen()));
-        }
 
         return Navigator(
           pages: pages,

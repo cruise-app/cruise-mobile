@@ -7,7 +7,7 @@ import 'package:cruise/features/register/domain/repo/register_repo.dart';
 import 'package:cruise/features/register/domain/usecases/register_usecase.dart';
 import 'package:cruise/features/register/domain/usecases/verification_usecase.dart';
 import 'package:cruise/features/register/presentation/manager/register_bloc.dart';
-import 'package:cruise/features/register/presentation/views/email_verification_screen.dart';
+import 'package:cruise/features/register/presentation/views/verification_screen.dart';
 import 'package:cruise/features/register/presentation/views/phone_verification_screen.dart';
 import 'package:cruise/features/register/presentation/views/register_flow_screen.dart';
 import 'package:cruise/util/shared/api_service.dart';
@@ -43,10 +43,6 @@ abstract class AppRouter {
       GoRoute(
           path: kRegisterScreen,
           builder: (context, state) => const RegisterScreen()),
-      GoRoute(
-        path: kEmailVerificationScreen,
-        builder: (context, state) => const EmailVerificationScreen(),
-      ),
       GoRoute(
         path: kPhoneVerificationScreen,
         builder: (context, state) => const PhoneVerificationScreen(),

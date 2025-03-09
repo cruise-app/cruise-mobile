@@ -11,9 +11,15 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pinput/pinput.dart';
 
-class EmailVerificationScreen extends StatelessWidget {
-  const EmailVerificationScreen({super.key});
-
+class VerificationScreen extends StatelessWidget {
+  const VerificationScreen(
+      {super.key,
+      required this.onComplete,
+      required this.title,
+      required this.subtitle});
+  final Function() onComplete;
+  final String title;
+  final String subtitle;
   @override
   Widget build(BuildContext context) {
     return PageLayout(
@@ -25,34 +31,24 @@ class EmailVerificationScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 25),
-            const CustomAppBar(
+            CustomAppBar(
               children: [
-                GoBackButton(color: Colors.black),
+                GestureDetector(
+                  onTap: () => Navigator.pop(context),
+                  child: Icon(
+                    size: context.responsive.iconSize * 0.6,
+                    Icons.arrow_back_ios,
+                    color: Colors.black,
+                  ),
+                ),
               ],
             ),
             const SizedBox(height: 20),
             Expanded(
               child: VerificationWidget(
-                title: 'Verify your email',
-                subtitle: 'Enter the code sent to your email',
-                onComplete: (otp) {
-                  // Navigate or handle email verification logic
-                  GoRouter.of(context).push(AppRouter.kCreatePasswordScreen);
-                },
-              ),
-            ),
-            const Divider(
-              color: MyColors.lightGrey,
-              thickness: 1,
-              height: 30,
-            ),
-            Expanded(
-              child: VerificationWidget(
-                title: 'Verify your phone number',
-                subtitle: 'Enter the code sent to your phone',
-                onComplete: (otp) {
-                  // Navigate or handle phone verification logic
-                },
+                title: title,
+                subtitle: subtitle,
+                onComplete: (otp) => onComplete(),
               ),
             ),
           ],
