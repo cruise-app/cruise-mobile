@@ -1,27 +1,27 @@
-import 'package:cruise/features/register/presentation/manager/register_bloc.dart';
-import 'package:cruise/features/register/presentation/views/verification_screen.dart';
 import 'package:cruise/features/register/presentation/views/widgets/action_button.dart';
-import 'package:cruise/features/register/presentation/views/widgets/verification_widget.dart';
 import 'package:cruise/util/responsive_manager/responsive_init.dart';
 import 'package:cruise/util/shared/colors.dart';
-import 'package:cruise/util/shared/widgets/custom_appbar.dart';
 import 'package:cruise/util/shared/widgets/custom_text_field.dart';
-import 'package:cruise/util/shared/widgets/go_back_button.dart';
 import 'package:cruise/util/shared/widgets/page_layout.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class RegisterStepThree extends StatefulWidget {
-  const RegisterStepThree({super.key});
+class RegisterStepThree extends StatelessWidget {
+  RegisterStepThree(
+      {super.key,
+      required this.onNext,
+      required this.onPrevious,
+      required this.phoneController,
+      this.selectedCountryCode,
+      required this.onSelectedCountryCodeChanged});
+  final Function() onNext;
+  final Function() onPrevious;
+  final TextEditingController phoneController;
+  String? selectedCountryCode;
+  final ValueChanged<String?> onSelectedCountryCodeChanged;
 
   @override
-  _RegisterStepThreeState createState() => _RegisterStepThreeState();
-}
-
-class _RegisterStepThreeState extends State<RegisterStepThree> {
-  final TextEditingController phoneController = TextEditingController();
-  String? selectedCountryCode = "+20";
+  // ignore: library_private_types_in_public_api
 
   @override
   Widget build(BuildContext context) {
@@ -42,8 +42,8 @@ class _RegisterStepThreeState extends State<RegisterStepThree> {
                     hint: 'Code',
                     items: ['+20', '+1', '+44', '+91'],
                     value: selectedCountryCode,
-                    onChanged: (value) =>
-                        setState(() => selectedCountryCode = value),
+                    onChanged: (selectedCountryCode) =>
+                        onSelectedCountryCodeChanged(selectedCountryCode),
                   ),
                 ),
                 const SizedBox(width: 10),
@@ -63,31 +63,7 @@ class _RegisterStepThreeState extends State<RegisterStepThree> {
                   size: MediaQuery.of(context).size.width * 0.4,
                 ),
                 RegisterActionButton(
-                  action: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => VerificationScreen(
-                        title: 'Phone Verification',
-                        subtitle:
-                            'We have sent a verification code to your phone. Please enter the code below',
-                        onComplete: () {
-                          BlocProvider.of<RegisterBloc>(context).add(
-                            RegisterSubmitted(
-                                firstName: 'd',
-                                lastName: 'lastName',
-                                password: 'password',
-                                confirmPassword: 'confirmPassword',
-                                email: 'email',
-                                phoneNumber: 'phoneNumber',
-                                gender: 'gender',
-                                month: 'month',
-                                day: 'day',
-                                year: 'year'),
-                          );
-                        },
-                      ),
-                    ),
-                  ),
+                  action: () => onNext,
                   message: 'Verify',
                   size: MediaQuery.of(context).size.width * 0.4,
                 )

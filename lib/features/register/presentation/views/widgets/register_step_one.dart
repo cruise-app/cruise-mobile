@@ -9,20 +9,30 @@ import 'package:cruise/util/shared/widgets/page_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class RegisterStepOne extends StatefulWidget {
+// ignore: must_be_immutable
+class RegisterStepOne extends StatelessWidget {
   final VoidCallback onNext;
-  const RegisterStepOne({required this.onNext, super.key});
-
-  @override
-  _RegisterStepOneState createState() => _RegisterStepOneState();
-}
-
-class _RegisterStepOneState extends State<RegisterStepOne> {
-  final TextEditingController firstNameController = TextEditingController();
-  final TextEditingController secondNameController = TextEditingController();
+  final TextEditingController firstNameController;
+  final TextEditingController secondNameController;
   String? selectedGender;
   String? selectedMonth, selectedDay, selectedYear;
-
+  final ValueChanged<String?> onSelectedMonthChanged,
+      onSelectedDayChanged,
+      onSelectedYearChanged;
+  final ValueChanged<String?> onGenderChanged;
+  RegisterStepOne(
+      {required this.onNext,
+      super.key,
+      required this.firstNameController,
+      required this.secondNameController,
+      this.selectedGender,
+      this.selectedMonth,
+      this.selectedDay,
+      this.selectedYear,
+      required this.onGenderChanged,
+      required this.onSelectedMonthChanged,
+      required this.onSelectedDayChanged,
+      required this.onSelectedYearChanged});
   @override
   Widget build(BuildContext context) {
     return PageLayout(
@@ -51,7 +61,7 @@ class _RegisterStepOneState extends State<RegisterStepOne> {
                 hint: 'Gender',
                 items: ['Male', 'Female'],
                 value: selectedGender,
-                onChanged: (value) => setState(() => selectedGender = value),
+                onChanged: (value) => onGenderChanged,
               ),
             ),
             const SizedBox(height: 15),
@@ -59,60 +69,60 @@ class _RegisterStepOneState extends State<RegisterStepOne> {
               children: [
                 Expanded(
                     child: _buildDropdown(
-                        hint: 'MM',
-                        items: List.generate(12, (i) => (i + 1).toString()),
-                        value: selectedMonth,
-                        onChanged: (value) =>
-                            setState(() => selectedMonth = value))),
+                  hint: 'MM',
+                  items: List.generate(12, (i) => (i + 1).toString()),
+                  value: selectedMonth,
+                  onChanged: (value) => onSelectedMonthChanged,
+                )),
                 const SizedBox(width: 10),
                 Expanded(
-                    child: _buildDropdown(
-                        hint: 'DD',
-                        items: List.generate(31, (i) => (i + 1).toString()),
-                        value: selectedDay,
-                        onChanged: (value) =>
-                            setState(() => selectedDay = value))),
+                  child: _buildDropdown(
+                      hint: 'DD',
+                      items: List.generate(31, (i) => (i + 1).toString()),
+                      value: selectedDay,
+                      onChanged: (value) => onSelectedDayChanged),
+                ),
                 const SizedBox(width: 10),
                 Expanded(
-                    child: _buildDropdown(
-                        hint: 'YYYY',
-                        items: List.generate(
-                            100, (i) => (DateTime.now().year - i).toString()),
-                        value: selectedYear,
-                        onChanged: (value) =>
-                            setState(() => selectedYear = value))),
+                  child: _buildDropdown(
+                      hint: 'YYYY',
+                      items: List.generate(
+                          100, (i) => (DateTime.now().year - i).toString()),
+                      value: selectedYear,
+                      onChanged: (value) => onSelectedYearChanged),
+                ),
               ],
             ),
             const SizedBox(height: 30),
-            RegisterActionButton(message: 'Next', action: widget.onNext)
+            RegisterActionButton(message: 'Next', action: onNext)
           ],
         ),
       ),
     );
   }
+}
 
-  Widget _buildDropdown(
-      {required String hint,
-      required List<String> items,
-      String? value,
-      required ValueChanged<String?> onChanged}) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
-      decoration: BoxDecoration(
-          color: Colors.white, borderRadius: BorderRadius.circular(10)),
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton<String>(
-          dropdownColor: Colors.white,
-          borderRadius: BorderRadius.circular(18),
-          hint: Text(hint, style: GoogleFonts.cabin(color: MyColors.lightGrey)),
-          value: value,
-          items: items
-              .map((String value) =>
-                  DropdownMenuItem<String>(value: value, child: Text(value)))
-              .toList(),
-          onChanged: onChanged,
-        ),
+Widget _buildDropdown(
+    {required String hint,
+    required List<String> items,
+    String? value,
+    required ValueChanged<String?> onChanged}) {
+  return Container(
+    padding: const EdgeInsets.symmetric(horizontal: 10),
+    decoration: BoxDecoration(
+        color: Colors.white, borderRadius: BorderRadius.circular(10)),
+    child: DropdownButtonHideUnderline(
+      child: DropdownButton<String>(
+        dropdownColor: Colors.white,
+        borderRadius: BorderRadius.circular(18),
+        hint: Text(hint, style: GoogleFonts.cabin(color: MyColors.lightGrey)),
+        value: value,
+        items: items
+            .map((String value) =>
+                DropdownMenuItem<String>(value: value, child: Text(value)))
+            .toList(),
+        onChanged: onChanged,
       ),
-    );
-  }
+    ),
+  );
 }

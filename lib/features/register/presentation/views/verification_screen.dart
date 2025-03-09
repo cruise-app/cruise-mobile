@@ -14,10 +14,12 @@ import 'package:pinput/pinput.dart';
 class VerificationScreen extends StatelessWidget {
   const VerificationScreen(
       {super.key,
-      required this.onComplete,
+      required this.onPrevious,
+      required this.onNext,
       required this.title,
       required this.subtitle});
-  final Function() onComplete;
+  final Function() onNext;
+  final Function() onPrevious;
   final String title;
   final String subtitle;
   @override
@@ -48,7 +50,7 @@ class VerificationScreen extends StatelessWidget {
               child: VerificationWidget(
                 title: title,
                 subtitle: subtitle,
-                onComplete: (otp) => onComplete(),
+                onComplete: (otp) => onNext(),
               ),
             ),
           ],

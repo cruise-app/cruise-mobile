@@ -12,19 +12,20 @@ import 'package:cruise/util/shared/widgets/page_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class RegisterStepTwo extends StatefulWidget {
-  const RegisterStepTwo({super.key});
-
+class RegisterStepTwo extends StatelessWidget {
+  const RegisterStepTwo(
+      {super.key,
+      required this.onNext,
+      required this.onPrevious,
+      required this.emailController,
+      required this.passwordController,
+      required this.confirmPasswordController});
+  final Function() onNext;
+  final Function() onPrevious;
+  final TextEditingController emailController;
+  final TextEditingController passwordController;
+  final TextEditingController confirmPasswordController;
   @override
-  _RegisterStepTwoState createState() => _RegisterStepTwoState();
-}
-
-class _RegisterStepTwoState extends State<RegisterStepTwo> {
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController =
-      TextEditingController();
-
   @override
   Widget build(BuildContext context) {
     return PageLayout(
@@ -58,26 +59,7 @@ class _RegisterStepTwoState extends State<RegisterStepTwo> {
                   size: MediaQuery.of(context).size.width * 0.4,
                 ),
                 RegisterActionButton(
-                  action: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => VerificationScreen(
-                          title: 'Email Verification',
-                          subtitle:
-                              'We have sent a verification code to your email address. Please enter the code below',
-                          onComplete: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const RegisterStepThree(),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    );
-                  },
+                  action: () => onNext,
                   message: 'Next',
                   size: MediaQuery.of(context).size.width * 0.4,
                 ),
