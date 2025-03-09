@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:bloc/bloc.dart';
 import 'package:cruise/features/register/data/models/email_otp_model.dart';
 import 'package:cruise/features/register/data/models/phone_otp_model.dart';
@@ -7,16 +6,19 @@ import 'package:cruise/features/register/data/models/register_request.dart';
 import 'package:cruise/features/register/domain/usecases/register_usecase.dart';
 import 'package:cruise/features/register/domain/usecases/verification_usecase.dart';
 import 'package:meta/meta.dart';
+
 part 'register_event.dart';
 part 'register_state.dart';
 
 class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
   final RegisterUsecase registerUsecase;
-  final VerificationUsecase verificationUsercase;
+  final VerificationUsecase verificationUsecase;
   RegisterRequest? _registerRequest;
 
-  RegisterBloc(this.registerUsecase, this.verificationUsercase)
-      : super(RegisterInitial()) {
+  RegisterBloc()
+      : registerUsecase = RegisterUsecase(),
+        verificationUsecase = VerificationUsecase(),
+        super(RegisterInitial()) {
     on<RegisterSubmitted>(_onRegisterUser);
     on<EmailVerificationSubmitted>(_onEmailVerification);
     on<PhoneVerificationSubmitted>(_onPhoneVerification);
@@ -37,34 +39,50 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
       year: event.year,
     );
 
-    emit(EmailVerficationState());
+    emit(EmailVerificationState());
   }
 
-  FutureOr<void> _onEmailVerification(
+  Future<void> _onEmailVerification(
       EmailVerificationSubmitted event, Emitter<RegisterState> emit) async {
-    final response = await verificationUsercase
-        .emailVerification(EmailOtpRequest(email: event.email));
-    print(response.status);
-    response.status == "success"
-        ? emit(PhoneVerificationState())
-        : emit(RegisterFailureState('Failed to verify email'));
+    try {
+      final response = await verificationUsecase
+          .emailVerification(EmailOtpRequest(email: event.email));
+      print(response.status);
+      response.status == "success"
+          ? emit(PhoneVerificationState())
+          : emit(RegisterFailureState('Failed to verify email'));
+    } catch (e) {
+      emit(RegisterFailureState("Email verification error: $e"));
+    }
   }
 
-  FutureOr<void> _onPhoneVerification(
+  Future<void> _onPhoneVerification(
       PhoneVerificationSubmitted event, Emitter<RegisterState> emit) async {
-    final response = await verificationUsercase
-        .phoneVerification(PhoneOtpRequest(phoneNumber: event.phoneNumber));
-    print(response.status);
-    if (response.status == "success") {
-      emit(RegisterLoadingState());
-      try {
-        final response = await registerUsecase(_registerRequest!);
-        emit(RegisterSuccessState(response.message)); // Success response
-      } catch (e) {
-        emit(RegisterFailureState(e.toString())); // Error handling
+    try {
+      final response = await verificationUsecase
+          .phoneVerification(PhoneOtpRequest(phoneNumber: event.phoneNumber));
+      print(response.status);
+
+      if (response.status == "success") {
+        if (_registerRequest == null) {
+          emit(RegisterFailureState(
+              "Error: Registration request data is missing"));
+          return;
+        }
+
+        emit(RegisterLoadingState());
+
+        try {
+          final registerResponse = await registerUsecase(_registerRequest!);
+          emit(RegisterSuccessState(registerResponse.message));
+        } catch (e) {
+          emit(RegisterFailureState("Registration failed: $e"));
+        }
+      } else {
+        emit(RegisterFailureState('Failed to verify phone'));
       }
-    } else {
-      emit(RegisterFailureState('Failed to verify phone'));
+    } catch (e) {
+      emit(RegisterFailureState("Phone verification error: $e"));
     }
   }
 }

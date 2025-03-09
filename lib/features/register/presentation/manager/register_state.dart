@@ -19,6 +19,6 @@ final class RegisterFailureState extends RegisterState {
   RegisterFailureState(this.message);
 }
 
-final class EmailVerficationState extends RegisterState {}
+final class EmailVerificationState extends RegisterState {}
 
 final class PhoneVerificationState extends RegisterState {}

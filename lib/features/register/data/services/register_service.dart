@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:cruise/features/register/data/models/email_otp_model.dart';
 import 'package:cruise/features/register/data/models/phone_otp_model.dart';
 import 'package:cruise/util/shared/api_service.dart';
@@ -5,7 +6,7 @@ import 'package:cruise/util/shared/api_service.dart';
 class RegisterService {
   final ApiService _apiService;
 
-  RegisterService(this._apiService);
+  RegisterService() : _apiService = ApiService();
 
   Future<Map<String, dynamic>> registerUser(
       Map<String, dynamic> requestData) async {
@@ -14,10 +15,9 @@ class RegisterService {
         endPoint: 'register',
         data: requestData,
       );
-
       return response;
-    } catch (e) {
-      throw Exception("Failed to register user: $e");
+    } on DioException catch (e) {
+      return {'error': _handleDioError(e, "Failed to register user")};
     }
   }
 
@@ -28,10 +28,9 @@ class RegisterService {
         endPoint: 'verify-email',
         data: requestData,
       );
-
       return EmailOtpResponse.fromJson(response);
-    } catch (e) {
-      throw Exception("Failed to verify email: $e");
+    } on DioException catch (e) {
+      throw Exception(_handleDioError(e, "Failed to verify email"));
     }
   }
 
@@ -42,10 +41,16 @@ class RegisterService {
         endPoint: 'verify-phoneNumber',
         data: requestData,
       );
-
       return PhoneOtpResponse.fromJson(response);
-    } catch (e) {
-      throw Exception("Failed to verify phone: $e");
+    } on DioException catch (e) {
+      throw Exception(_handleDioError(e, "Failed to verify phone"));
     }
+  }
+
+  String _handleDioError(DioException e, String defaultMessage) {
+    if (e.response != null) {
+      return "${e.response?.statusCode}: ${e.response?.data['message'] ?? defaultMessage}";
+    }
+    return defaultMessage;
   }
 }

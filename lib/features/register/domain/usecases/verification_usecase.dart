@@ -5,7 +5,7 @@ import 'package:cruise/features/register/data/services/register_service.dart';
 class VerificationUsecase {
   final RegisterService registerService; // fix
 
-  VerificationUsecase(this.registerService);
+  VerificationUsecase() : registerService = RegisterService();
 
   Future<PhoneOtpResponse> phoneVerification(PhoneOtpRequest request) async {
     try {

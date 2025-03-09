@@ -99,189 +99,165 @@ class _RegisterScreenState extends State<RegisterScreen> {
         padding: EdgeInsets.symmetric(
             horizontal: context.responsive.pageLayoutHorizontalPadding,
             vertical: 18),
-        child: BlocProvider(
-          create: (context) => RegisterBloc(
-              RegisterUsecase(RegisterRepo(RegisterService(ApiService(Dio())))),
-              VerificationUsecase(RegisterService(ApiService(Dio())))),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CustomAppBar(
-                children: [
-                  const GoBackButton(),
-                  AuthSwitcherButton(
-                    message: 'Sign In',
-                    action: () => GoRouter.of(context)
-                        .pushReplacement(AppRouter.kLoginScreen),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-              Text(
-                'Set up your profile',
-                style: GoogleFonts.poppins(
-                  fontSize: 28,
-                  fontWeight: FontWeight.w600,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            CustomAppBar(
+              children: [
+                const GoBackButton(),
+                AuthSwitcherButton(
+                  message: 'Sign In',
+                  action: () => GoRouter.of(context)
+                      .pushReplacement(AppRouter.kLoginScreen),
                 ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            Text(
+              'Set up your profile',
+              style: GoogleFonts.poppins(
+                fontSize: 28,
+                fontWeight: FontWeight.w600,
               ),
-
-              const SizedBox(height: 30),
-              Row(
-                children: [
-                  Expanded(
-                      child: CustomTextField(
-                    hint: 'First Name',
-                    controller: firstNameController,
-                  )),
-                  const SizedBox(width: 10),
-                  Expanded(
-                      child: CustomTextField(
-                    hint: 'Second Name',
-                    controller: secondNameController,
-                  )),
-                ],
-              ),
-              const SizedBox(height: 15),
-              Row(
-                children: [
-                  Expanded(
+            ),
+            const SizedBox(height: 30),
+            Row(
+              children: [
+                Expanded(
                     child: CustomTextField(
-                      hint: 'Password',
-                      controller: passwordController,
-                    ),
+                  hint: 'First Name',
+                  controller: firstNameController,
+                )),
+                const SizedBox(width: 10),
+                Expanded(
+                    child: CustomTextField(
+                  hint: 'Second Name',
+                  controller: secondNameController,
+                )),
+              ],
+            ),
+            const SizedBox(height: 15),
+            Row(
+              children: [
+                Expanded(
+                  child: CustomTextField(
+                    hint: 'Password',
+                    controller: passwordController,
                   ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                      child: CustomTextField(
-                    hint: 'Confirm Password',
-                    controller: confirmPasswordController,
-                  )),
-                ],
-              ),
-              const SizedBox(height: 15),
-              CustomTextField(hint: 'Email', controller: emailController),
-              const SizedBox(height: 15),
-              Row(
-                children: [
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.25,
-                    child: _buildDropdown(
-                      hint: 'Code',
-                      items: ['+20', '+1', '+44', '+91'],
-                      value: selectedCountryCode,
-                      onChanged: (value) => setState(() {
-                        selectedCountryCode = value;
-                      }),
-                    ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                    child: CustomTextField(
+                  hint: 'Confirm Password',
+                  controller: confirmPasswordController,
+                )),
+              ],
+            ),
+            const SizedBox(height: 15),
+            CustomTextField(hint: 'Email', controller: emailController),
+            const SizedBox(height: 15),
+            Row(
+              children: [
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.25,
+                  child: _buildDropdown(
+                    hint: 'Code',
+                    items: ['+20', '+1', '+44', '+91'],
+                    value: selectedCountryCode,
+                    onChanged: (value) => setState(() {
+                      selectedCountryCode = value;
+                    }),
                   ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                      child: CustomTextField(
-                    hint: 'Phone Number',
-                    controller: phoneController,
-                  )),
-                ],
-              ),
-              const SizedBox(height: 15),
-              _buildDropdown(
-                hint: 'Gender',
-                items: ['Male', 'Female'],
-                value: selectedGender,
-                onChanged: (value) => setState(() {
-                  selectedGender = value;
-                }),
-              ),
-              const SizedBox(height: 15),
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildDropdown(
-                      hint: 'MM',
-                      items: List.generate(12,
-                          (index) => (index + 1).toString().padLeft(2, '0')),
-                      value: selectedMonth,
-                      onChanged: (value) => setState(() {
-                        selectedMonth = value;
-                      }),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: _buildDropdown(
-                      hint: 'DD',
-                      items: List.generate(31,
-                          (index) => (index + 1).toString().padLeft(2, '0')),
-                      value: selectedDay,
-                      onChanged: (value) => setState(() {
-                        selectedDay = value;
-                      }),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: _buildDropdown(
-                      hint: 'YYYY',
-                      items: List.generate(100,
-                          (index) => (DateTime.now().year - index).toString()),
-                      value: selectedYear,
-                      onChanged: (value) => setState(() {
-                        selectedYear = value;
-                      }),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 30),
-              const Spacer(),
-              // FlutterPwValidator(
-              //   width: 200,
-              //   height: 80,
-              //   minLength: 8,
-              //   onSuccess: () {},
-              //   controller: passwordController,
-              // ),
-              BlocBuilder<RegisterBloc, RegisterState>(
-                builder: (context, state) {
-                  return SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: (state is RegisterLoadingState)
-                            ? Colors.grey
-                            : Colors.black,
-                        padding: const EdgeInsets.symmetric(vertical: 15),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                      onPressed: () => {
-                        _register(context),
-                        GoRouter.of(context)
-                            .push(AppRouter.kRegisterVerificationScreen)
-                      },
-                      child: Text(
-                        (state is RegisterLoadingState)
-                            ? 'Loading...'
-                            : 'Sign Up',
-                        style:
-                            const TextStyle(color: Colors.white, fontSize: 16),
-                      ),
-                    ),
-                  );
-                },
-              ),
-              BlocBuilder<RegisterBloc, RegisterState>(
-                  builder: (context, state) {
-                if (state is RegisterFailureState) {
-                  print(state.message);
-                }
-                if (state is RegisterSuccessState) {
-                  print(state.message);
-                }
-                return const SizedBox.shrink();
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                    child: CustomTextField(
+                  hint: 'Phone Number',
+                  controller: phoneController,
+                )),
+              ],
+            ),
+            const SizedBox(height: 15),
+            _buildDropdown(
+              hint: 'Gender',
+              items: ['Male', 'Female'],
+              value: selectedGender,
+              onChanged: (value) => setState(() {
+                selectedGender = value;
               }),
-            ],
-          ),
+            ),
+            const SizedBox(height: 15),
+            Row(
+              children: [
+                Expanded(
+                  child: _buildDropdown(
+                    hint: 'MM',
+                    items: List.generate(
+                        12, (index) => (index + 1).toString().padLeft(2, '0')),
+                    value: selectedMonth,
+                    onChanged: (value) => setState(() {
+                      selectedMonth = value;
+                    }),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: _buildDropdown(
+                    hint: 'DD',
+                    items: List.generate(
+                        31, (index) => (index + 1).toString().padLeft(2, '0')),
+                    value: selectedDay,
+                    onChanged: (value) => setState(() {
+                      selectedDay = value;
+                    }),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: _buildDropdown(
+                    hint: 'YYYY',
+                    items: List.generate(100,
+                        (index) => (DateTime.now().year - index).toString()),
+                    value: selectedYear,
+                    onChanged: (value) => setState(() {
+                      selectedYear = value;
+                    }),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 30),
+            const Spacer(),
+            BlocBuilder<RegisterBloc, RegisterState>(
+              builder: (context, state) {
+                return SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: (state is RegisterLoadingState)
+                          ? Colors.grey
+                          : Colors.black,
+                      padding: const EdgeInsets.symmetric(vertical: 15),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    onPressed: () => {
+                      _register(context),
+                      GoRouter.of(context)
+                          .push(AppRouter.kEmailVerificationScreen)
+                    },
+                    child: Text(
+                      (state is RegisterLoadingState)
+                          ? 'Loading...'
+                          : 'Sign Up',
+                      style: const TextStyle(color: Colors.white, fontSize: 16),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ],
         ),
       ),
     );

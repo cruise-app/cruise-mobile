@@ -75,7 +75,7 @@ class LobbyScreen extends StatelessWidget {
                         height: 50,
                         message: 'Sign Up- User',
                         action: () {
-                          GoRouter.of(context).push(AppRouter.kRegisterScreen);
+                          GoRouter.of(context).push(AppRouter.kRegisterFlow);
                         },
                         textStyle: GoogleFonts.crimsonText(
                           fontSize: context.responsive.fontSize * 1.5,
