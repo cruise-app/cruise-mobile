@@ -1,7 +1,7 @@
-class EmailOtpRequest {
+class CheckEmailRequest {
   final String email;
 
-  EmailOtpRequest({
+  CheckEmailRequest({
     required this.email,
   });
 
@@ -13,15 +13,15 @@ class EmailOtpRequest {
   }
 }
 
-class EmailOtpResponse {
+class CheckEmailResponse {
   final String status;
 
-  EmailOtpResponse({
+  CheckEmailResponse({
     required this.status,
   });
 
-  factory EmailOtpResponse.fromJson(Map<String, dynamic> json) {
-    return EmailOtpResponse(
+  factory CheckEmailResponse.fromJson(Map<String, dynamic> json) {
+    return CheckEmailResponse(
       status: json['message'],
     );
   }

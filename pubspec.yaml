@@ -29,6 +29,7 @@ dependencies:
   bloc: ^9.0.0
   meta: ^1.15.0
   flutter_pw_validator: ^1.6.0
+  dartz: ^0.10.1
 
 dev_dependencies:
   flutter_test:

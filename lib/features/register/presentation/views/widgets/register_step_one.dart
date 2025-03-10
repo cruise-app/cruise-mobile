@@ -1,3 +1,4 @@
+import 'package:cruise/features/register/presentation/manager/register_bloc.dart';
 import 'package:cruise/features/register/presentation/views/widgets/action_button.dart';
 import 'package:cruise/util/responsive_manager/responsive_init.dart';
 import 'package:cruise/util/shared/colors.dart';
@@ -6,9 +7,9 @@ import 'package:cruise/util/shared/widgets/custom_text_field.dart';
 import 'package:cruise/util/shared/widgets/go_back_button.dart';
 import 'package:cruise/util/shared/widgets/page_layout.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-// ignore: must_be_immutable
 class RegisterStepOne extends StatelessWidget {
   final Function onNext;
   final TextEditingController firstNameController;
@@ -19,19 +20,22 @@ class RegisterStepOne extends StatelessWidget {
       onSelectedDayChanged,
       onSelectedYearChanged;
   final ValueChanged<String?> onGenderChanged;
-  RegisterStepOne(
-      {required this.onNext,
-      super.key,
-      required this.firstNameController,
-      required this.secondNameController,
-      this.selectedGender,
-      this.selectedMonth,
-      this.selectedDay,
-      this.selectedYear,
-      required this.onGenderChanged,
-      required this.onSelectedMonthChanged,
-      required this.onSelectedDayChanged,
-      required this.onSelectedYearChanged});
+
+  RegisterStepOne({
+    required this.onNext,
+    super.key,
+    required this.firstNameController,
+    required this.secondNameController,
+    this.selectedGender,
+    this.selectedMonth,
+    this.selectedDay,
+    this.selectedYear,
+    required this.onGenderChanged,
+    required this.onSelectedMonthChanged,
+    required this.onSelectedDayChanged,
+    required this.onSelectedYearChanged,
+  });
+
   @override
   Widget build(BuildContext context) {
     return PageLayout(
@@ -94,12 +98,33 @@ class RegisterStepOne extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 30),
-            RegisterActionButton(
-              message: 'Next',
-              action: () {
-                onNext();
+            BlocListener<RegisterBloc, RegisterState>(
+              listener: (context, state) {
+                if (state is RegisterStepOneStateSuccess) {
+                  onNext();
+                } else if (state is RegisterStepOneStateFailure) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(state.message),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                }
               },
-            )
+              child: RegisterActionButton(
+                message: 'Next',
+                action: () {
+                  context.read<RegisterBloc>().add(RegisterStepOneSubmitted(
+                        firstName: firstNameController.text,
+                        lastName: secondNameController.text,
+                        gender: selectedGender ?? '',
+                        month: selectedMonth ?? '',
+                        day: selectedDay ?? '',
+                        year: selectedYear ?? '',
+                      ));
+                },
+              ),
+            ),
           ],
         ),
       ),
@@ -107,11 +132,12 @@ class RegisterStepOne extends StatelessWidget {
   }
 }
 
-Widget _buildDropdown(
-    {required String hint,
-    required List<String> items,
-    String? value,
-    required ValueChanged<String?> onChanged}) {
+Widget _buildDropdown({
+  required String hint,
+  required List<String> items,
+  String? value,
+  required ValueChanged<String?> onChanged,
+}) {
   return Container(
     padding: const EdgeInsets.symmetric(horizontal: 10),
     decoration: BoxDecoration(

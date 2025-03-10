@@ -28,14 +28,55 @@ class RegisterSubmitted extends RegisterEvent {
       required this.year});
 }
 
-class EmailVerificationSubmitted extends RegisterEvent {
-  final String email;
+class RegisterStepOneSubmitted extends RegisterEvent {
+  final String firstName;
+  final String lastName;
+  final String gender;
+  final String month;
+  final String day;
+  final String year;
 
-  EmailVerificationSubmitted(this.email);
+  RegisterStepOneSubmitted(
+      {required this.firstName,
+      required this.lastName,
+      required this.gender,
+      required this.month,
+      required this.day,
+      required this.year});
 }
 
-class PhoneVerificationSubmitted extends RegisterEvent {
+class RegisterStepTwoSubmitted extends RegisterEvent {
+  final String email;
+  final String password;
+  final String confirmPassword;
+
+  RegisterStepTwoSubmitted(
+      {required this.email,
+      required this.password,
+      required this.confirmPassword});
+}
+
+// class VerifyEmailSubmitted extends RegisterEvent {
+//   final String email;
+//   final String otp;
+//   VerifyEmailSubmitted({required this.email, required this.otp});
+// }
+
+class ToVerifySubmitted extends RegisterEvent {
+  final String toVerify;
+  final String otp;
+
+  ToVerifySubmitted({required this.toVerify, required this.otp});
+}
+
+class RegisterStepThreeSubmitted extends RegisterEvent {
   final String phoneNumber;
 
-  PhoneVerificationSubmitted(this.phoneNumber);
+  RegisterStepThreeSubmitted({required this.phoneNumber});
 }
+
+// class VerifyPhoneSubmitted extends RegisterEvent {
+//   final String phoneNumber;
+
+//   VerifyPhoneSubmitted({required this.phoneNumber});
+// }

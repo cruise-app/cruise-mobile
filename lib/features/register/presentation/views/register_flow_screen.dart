@@ -86,14 +86,11 @@ class _RegisterFlowScreenState extends State<RegisterFlowScreen> {
         onPrevious: previousStep,
       ),
       VerificationScreen(
-        onPrevious: () {
-          previousStep();
-        },
-        onNext: (otp) {
-          // Handle OTP verification
-          print("OTP: \$otp");
-          print('Registration not complete');
-          nextStep();
+        toVerify: emailController.text,
+        onPrevious: previousStep,
+        onNext: (String otp) {
+          print("OTP entered: $otp"); // Debugging
+          nextStep(); // Ensure step updates
         },
         title: 'Verify your email',
         subtitle: 'Enter the 4-digit code sent to your email',
@@ -110,8 +107,9 @@ class _RegisterFlowScreenState extends State<RegisterFlowScreen> {
         ),
       ),
       VerificationScreen(
+        toVerify: selectedCountryCode + phoneController.text,
         onPrevious: previousStep,
-        onNext: (otp) {
+        onNext: (String otp) {
           // Handle OTP verification
           print("OTP: \$otp");
           print('Registration Complete');

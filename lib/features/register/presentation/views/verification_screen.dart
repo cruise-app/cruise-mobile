@@ -10,11 +10,13 @@ class VerificationScreen extends StatelessWidget {
       required this.onPrevious,
       required this.onNext,
       required this.title,
-      required this.subtitle});
+      required this.subtitle,
+      required this.toVerify});
   final Function(String) onNext;
   final Function onPrevious;
   final String title;
   final String subtitle;
+  final String toVerify;
   @override
   Widget build(BuildContext context) {
     return PageLayout(
@@ -28,9 +30,12 @@ class VerificationScreen extends StatelessWidget {
             const SizedBox(height: 25),
             const SizedBox(height: 20),
             VerificationWidget(
+              toVerify: toVerify,
               title: title,
               subtitle: subtitle,
-              onComplete: onNext,
+              onComplete: (otp) {
+                onNext(otp);
+              },
             ),
             const SizedBox(height: 30),
             RegisterActionButton(

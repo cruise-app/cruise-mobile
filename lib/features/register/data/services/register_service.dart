@@ -1,6 +1,9 @@
+import 'package:cruise/features/register/data/models/verify_otp.dart';
+import 'package:cruise/util/shared/failure_model.dart';
+import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
-import 'package:cruise/features/register/data/models/email_otp_model.dart';
-import 'package:cruise/features/register/data/models/phone_otp_model.dart';
+import 'package:cruise/features/register/data/models/check_email.dart';
+import 'package:cruise/features/register/data/models/check_phone.dart';
 import 'package:cruise/util/shared/api_service.dart';
 
 class RegisterService {
@@ -21,29 +24,64 @@ class RegisterService {
     }
   }
 
-  Future<EmailOtpResponse> requestEmailOTP(
+  Future<Either<Failure, CheckEmailResponse>> checkEmail(
       Map<String, dynamic> requestData) async {
     try {
       final response = await _apiService.post(
-        endPoint: 'verify-email',
+        endPoint: 'check-email',
         data: requestData,
       );
-      return EmailOtpResponse.fromJson(response);
+      final CheckEmailResponse emailOtpResponse =
+          CheckEmailResponse.fromJson(response);
+      print("Good part {}");
+      return Right(emailOtpResponse);
     } on DioException catch (e) {
-      throw Exception(_handleDioError(e, "Failed to verify email"));
+      print("Serice Error part {}");
+      print("Error: $e");
+      return Left(ValidationFailure(message: "Failed to verify email"));
     }
   }
 
-  Future<PhoneOtpResponse> requestPhoneOTP(
-      Map<String, dynamic> requestData) async {
+  Future<PhoneOtpResponse> checkPhone(Map<String, dynamic> requestData) async {
     try {
       final response = await _apiService.post(
-        endPoint: 'verify-phoneNumber',
+        endPoint: 'check-phoneNumber',
         data: requestData,
       );
       return PhoneOtpResponse.fromJson(response);
     } on DioException catch (e) {
       throw Exception(_handleDioError(e, "Failed to verify phone"));
+    }
+  }
+
+  Future<Either<Failure, CheckEmailResponse>> sendEmailOTP(
+      Map<String, dynamic> requestData) async {
+    try {
+      final response =
+          await _apiService.post(endPoint: 'send-email-otp', data: requestData);
+
+      final checkEmailResponse = CheckEmailResponse.fromJson(response);
+
+      return Right(checkEmailResponse); // Success case
+    } catch (e) {
+      return Left(Failure(message: e.toString())); // Failure case
+    }
+  }
+
+  Future<Either<Failure, VerifyOtpResponse>> verifyOtp(
+      Map<String, dynamic> requestData) async {
+    try {
+      final response = await _apiService.post(
+        endPoint: 'verify-otp',
+        data: requestData,
+      );
+      final verifyOtpResponse = VerifyOtpResponse.fromJson(response);
+      print("Good part {}");
+      return Right(verifyOtpResponse);
+    } on DioException catch (e) {
+      print("Serice Error part {}");
+      print("Error: $e");
+      return Left(ValidationFailure(message: "Failed to verify email"));
     }
   }
 
