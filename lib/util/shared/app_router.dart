@@ -4,7 +4,7 @@ import 'package:cruise/features/forget_password/forget_password_screen.dart';
 import 'package:cruise/features/lobby/lobby_screen.dart';
 
 import 'package:cruise/features/register/presentation/manager/register_bloc.dart';
-import 'package:cruise/features/register/presentation/views/phone_verification_screen.dart';
+
 import 'package:cruise/features/register/presentation/views/register_flow_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -14,7 +14,6 @@ abstract class AppRouter {
   static const kLobbyScreen = '/';
   static const kRegisterFlow = '/RegisterFlow';
   static const kEmailVerificationScreen = '/RegisterVerificationScreen';
-  static const kPhoneVerificationScreen = '/PhoneVerificationScreen';
   static const kLoginScreen = '/LoginScreen';
   static const kForgetPasswordScreen = '/ForgetPasswordScreen';
   static const kEmailVerificationCodeScreen = '/EmailVerificationCodeScreen';
@@ -30,12 +29,8 @@ abstract class AppRouter {
         path: kRegisterFlow,
         builder: (context, state) => BlocProvider(
           create: (context) => RegisterBloc(),
-          child: RegisterFlowScreen(),
+          child: const RegisterFlowScreen(),
         ),
-      ),
-      GoRoute(
-        path: kPhoneVerificationScreen,
-        builder: (context, state) => const PhoneVerificationScreen(),
       ),
       GoRoute(
         path: kLoginScreen,

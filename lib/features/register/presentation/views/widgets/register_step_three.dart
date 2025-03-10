@@ -13,12 +13,12 @@ class RegisterStepThree extends StatelessWidget {
       required this.onNext,
       required this.onPrevious,
       required this.phoneController,
-      this.selectedCountryCode,
+      required this.selectedCountryCode,
       required this.onSelectedCountryCodeChanged});
-  final Function() onNext;
-  final Function() onPrevious;
+  final Function onNext;
+  final Function onPrevious;
   final TextEditingController phoneController;
-  String? selectedCountryCode;
+  String selectedCountryCode;
   final ValueChanged<String?> onSelectedCountryCodeChanged;
 
   @override
@@ -43,8 +43,7 @@ class RegisterStepThree extends StatelessWidget {
                     hint: 'Code',
                     items: ['+20', '+1', '+44', '+91'],
                     value: selectedCountryCode,
-                    onChanged: (selectedCountryCode) =>
-                        onSelectedCountryCodeChanged(selectedCountryCode),
+                    onChanged: onSelectedCountryCodeChanged,
                   ),
                 ),
                 const SizedBox(width: 10),
@@ -58,13 +57,17 @@ class RegisterStepThree extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 RegisterActionButton(
-                  action: onPrevious,
+                  action: () {
+                    onPrevious();
+                  },
                   message: "Back",
                   color: Colors.grey,
                   size: MediaQuery.of(context).size.width * 0.4,
                 ),
                 RegisterActionButton(
-                  action: onNext,
+                  action: () {
+                    onNext();
+                  },
                   message: 'Verify',
                   size: MediaQuery.of(context).size.width * 0.4,
                 )

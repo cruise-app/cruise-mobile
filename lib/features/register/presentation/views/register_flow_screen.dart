@@ -26,30 +26,37 @@ class _RegisterFlowScreenState extends State<RegisterFlowScreen> {
   String? selectedGender;
   String? selectedMonth, selectedDay, selectedYear;
   final TextEditingController emailController = TextEditingController();
+  String selectedCountryCode = '+20';
   final TextEditingController phoneController = TextEditingController();
 
   void nextStep() {
-    setState(() {
-      currentStep++;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      setState(() {
+        currentStep++;
+      });
     });
   }
 
   void previousStep() {
-    setState(() {
-      currentStep--;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      setState(() {
+        currentStep--;
+      });
     });
   }
 
   void completeRegistration() {
     // Handle final submission
     print("User Data:");
-    print("Name: \${firstNameController.text} \${secondNameController.text}");
-    print("Gender: \$selectedGender");
-    print("DOB: \$selectedMonth-\$selectedDay-\$selectedYear");
-    print("Email: \${emailController.text}");
-    print("Phone: \${phoneController.text}");
+    print('First Name: ${firstNameController.text}');
+    print('Second Name: ${secondNameController.text}');
+    print("Email: ${emailController.text}");
+    print("Password: ${passwordController.text}");
+    print("Phone: ${phoneController.text}");
+    print("Country Code: $selectedCountryCode");
+    print('Month, Day, Year: $selectedMonth, $selectedDay, $selectedYear');
+    print('Gender: $selectedGender');
     GoRouter.of(context).push(AppRouter.kLoginScreen);
-    // TODO: Trigger Bloc event or API call to store user data
   }
 
   @override
@@ -73,24 +80,43 @@ class _RegisterFlowScreenState extends State<RegisterFlowScreen> {
         emailController: emailController,
         passwordController: passwordController,
         confirmPasswordController: confirmPasswordController,
-        onNext: nextStep,
+        onNext: () {
+          nextStep();
+        },
         onPrevious: previousStep,
       ),
       VerificationScreen(
-        onPrevious: previousStep,
-        onNext: nextStep,
+        onPrevious: () {
+          previousStep();
+        },
+        onNext: (otp) {
+          // Handle OTP verification
+          print("OTP: \$otp");
+          print('Registration not complete');
+          nextStep();
+        },
         title: 'Verify your email',
         subtitle: 'Enter the 4-digit code sent to your email',
       ),
       RegisterStepThree(
+        selectedCountryCode: selectedCountryCode!,
         phoneController: phoneController,
         onNext: nextStep,
         onPrevious: previousStep,
-        onSelectedCountryCodeChanged: (String? value) {},
+        onSelectedCountryCodeChanged: (value) => setState(
+          () {
+            selectedCountryCode = value!;
+          },
+        ),
       ),
       VerificationScreen(
         onPrevious: previousStep,
-        onNext: completeRegistration,
+        onNext: (otp) {
+          // Handle OTP verification
+          print("OTP: \$otp");
+          print('Registration Complete');
+          completeRegistration();
+        },
         title: 'Verify your phone',
         subtitle: 'Enter the 4-digit code sent to your phone',
       ),

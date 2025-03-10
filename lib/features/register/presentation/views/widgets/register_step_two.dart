@@ -13,8 +13,8 @@ class RegisterStepTwo extends StatelessWidget {
       required this.emailController,
       required this.passwordController,
       required this.confirmPasswordController});
-  final Function() onNext;
-  final Function() onPrevious;
+  final Function onNext;
+  final Function onPrevious;
   final TextEditingController emailController;
   final TextEditingController passwordController;
   final TextEditingController confirmPasswordController;
@@ -46,13 +46,17 @@ class RegisterStepTwo extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 RegisterActionButton(
-                  action: onPrevious,
+                  action: () {
+                    onPrevious();
+                  },
                   message: "Back",
                   color: Colors.grey,
                   size: MediaQuery.of(context).size.width * 0.4,
                 ),
                 RegisterActionButton(
-                  action: onNext,
+                  action: () {
+                    onNext();
+                  },
                   message: 'Next',
                   size: MediaQuery.of(context).size.width * 0.4,
                 ),

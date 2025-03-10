@@ -10,7 +10,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 // ignore: must_be_immutable
 class RegisterStepOne extends StatelessWidget {
-  final VoidCallback onNext;
+  final Function onNext;
   final TextEditingController firstNameController;
   final TextEditingController secondNameController;
   String? selectedGender;
@@ -60,7 +60,7 @@ class RegisterStepOne extends StatelessWidget {
                 hint: 'Gender',
                 items: ['Male', 'Female'],
                 value: selectedGender,
-                onChanged: (value) => onGenderChanged,
+                onChanged: onGenderChanged,
               ),
             ),
             const SizedBox(height: 15),
@@ -71,15 +71,16 @@ class RegisterStepOne extends StatelessWidget {
                   hint: 'MM',
                   items: List.generate(12, (i) => (i + 1).toString()),
                   value: selectedMonth,
-                  onChanged: (value) => onSelectedMonthChanged,
+                  onChanged: onSelectedMonthChanged,
                 )),
                 const SizedBox(width: 10),
                 Expanded(
                   child: _buildDropdown(
-                      hint: 'DD',
-                      items: List.generate(31, (i) => (i + 1).toString()),
-                      value: selectedDay,
-                      onChanged: (value) => onSelectedDayChanged),
+                    hint: 'DD',
+                    items: List.generate(31, (i) => (i + 1).toString()),
+                    value: selectedDay,
+                    onChanged: onSelectedDayChanged,
+                  ),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
@@ -88,12 +89,17 @@ class RegisterStepOne extends StatelessWidget {
                       items: List.generate(
                           100, (i) => (DateTime.now().year - i).toString()),
                       value: selectedYear,
-                      onChanged: (value) => onSelectedYearChanged),
+                      onChanged: onSelectedYearChanged),
                 ),
               ],
             ),
             const SizedBox(height: 30),
-            RegisterActionButton(message: 'Next', action: onNext)
+            RegisterActionButton(
+              message: 'Next',
+              action: () {
+                onNext();
+              },
+            )
           ],
         ),
       ),
