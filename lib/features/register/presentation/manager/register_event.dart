@@ -71,8 +71,9 @@ class ToVerifySubmitted extends RegisterEvent {
 
 class RegisterStepThreeSubmitted extends RegisterEvent {
   final String phoneNumber;
-
-  RegisterStepThreeSubmitted({required this.phoneNumber});
+  final String countryCode;
+  RegisterStepThreeSubmitted(
+      {required this.phoneNumber, required this.countryCode});
 }
 
 // class VerifyPhoneSubmitted extends RegisterEvent {

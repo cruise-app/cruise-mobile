@@ -1,7 +1,7 @@
-class PhoneOtpRequest {
+class CheckPhoneRequest {
   final String phoneNumber;
 
-  PhoneOtpRequest({
+  CheckPhoneRequest({
     required this.phoneNumber,
   });
 
@@ -13,15 +13,15 @@ class PhoneOtpRequest {
   }
 }
 
-class PhoneOtpResponse {
+class CheckPhoneResponse {
   final String status;
 
-  PhoneOtpResponse({
+  CheckPhoneResponse({
     required this.status,
   });
 
-  factory PhoneOtpResponse.fromJson(Map<String, dynamic> json) {
-    return PhoneOtpResponse(
+  factory CheckPhoneResponse.fromJson(Map<String, dynamic> json) {
+    return CheckPhoneResponse(
       status: json['message'],
     );
   }

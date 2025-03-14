@@ -1,9 +1,11 @@
+import 'package:cruise/features/register/presentation/manager/register_bloc.dart';
 import 'package:cruise/features/register/presentation/views/widgets/action_button.dart';
 import 'package:cruise/util/responsive_manager/responsive_init.dart';
 import 'package:cruise/util/shared/colors.dart';
 import 'package:cruise/util/shared/widgets/custom_text_field.dart';
 import 'package:cruise/util/shared/widgets/page_layout.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 // ignore: must_be_immutable
@@ -64,12 +66,31 @@ class RegisterStepThree extends StatelessWidget {
                   color: Colors.grey,
                   size: MediaQuery.of(context).size.width * 0.4,
                 ),
-                RegisterActionButton(
-                  action: () {
-                    onNext();
+                BlocListener<RegisterBloc, RegisterState>(
+                  listener: (context, state) => {
+                    if (state is RegisterStepThreeStateSuccess)
+                      {print("Done"), onNext()}
+                    else if (state is RegisterStepThreeStateFailure)
+                      {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(state.message),
+                            backgroundColor: Colors.red,
+                          ),
+                        )
+                      }
                   },
-                  message: 'Verify',
-                  size: MediaQuery.of(context).size.width * 0.4,
+                  child: RegisterActionButton(
+                    action: () {
+                      context.read<RegisterBloc>().add(
+                            RegisterStepThreeSubmitted(
+                                phoneNumber: phoneController.text,
+                                countryCode: selectedCountryCode),
+                          );
+                    },
+                    message: 'Verify',
+                    size: MediaQuery.of(context).size.width * 0.4,
+                  ),
                 )
               ],
             )

@@ -10,26 +10,27 @@ class VerificationUsecase {
 
   VerificationUsecase() : registerService = RegisterService();
 
-  // Future<PhoneOtpResponse> phoneVerification(PhoneOtpRequest request) async {
-  //   try {
-  //     print("The json now looks like this : ${request.toJson()}");
-  //     return await registerService.requestPhoneOTP(request.toJson());
-  //   } catch (e) {
-  //     throw Exception("Registration failed: $e");
-  //   }
-  // }
-
   Future<Either<Failure, CheckEmailResponse>> emailAvailabilityCheck(
       CheckEmailRequest request) async {
     print("The json now looks like this : ${request.toJson()}");
     return await registerService.checkEmail(request.toJson());
   }
 
-  Future<void> sendEmailOTP(CheckEmailRequest request) async {
-    await registerService.sendEmailOTP(request.toJson());
+  Future<Either<Failure, CheckPhoneResponse>> phoneAvailabilityCheck(
+      CheckPhoneRequest request) async {
+    print("The json now looks like this : ${request.toJson()}");
+    return await registerService.checkPhone(request.toJson());
   }
 
-  Future<Either<Failure, VerifyOtpResponse>> verifyEmail(
+  Future<void> sendEmailOtp(CheckEmailRequest request) async {
+    await registerService.sendEmailOtp(request.toJson());
+  }
+
+  Future<void> sendPhoneOtp(CheckPhoneRequest request) async {
+    await registerService.sendPhoneOtp(request.toJson());
+  }
+
+  Future<Either<Failure, VerifyOtpResponse>> verifyOtp(
       VerifyOtpRequest request) async {
     return await registerService.verifyOtp(request.toJson());
   }

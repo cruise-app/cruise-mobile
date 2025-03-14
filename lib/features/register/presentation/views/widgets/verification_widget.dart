@@ -42,9 +42,9 @@ class VerificationWidget extends StatelessWidget {
         // BlocListener should wrap Pinput
         BlocListener<RegisterBloc, RegisterState>(
           listener: (context, state) {
-            if (state is EmailVerificationStateSuccess) {
+            if (state is OtpVerificationStateSuccess) {
               onComplete(''); // Pass the OTP that was verified
-            } else if (state is EmailVerificationStateFailure) {
+            } else if (state is OtpVerificationStateFailure) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(state.message),

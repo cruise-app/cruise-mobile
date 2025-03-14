@@ -42,19 +42,23 @@ class RegisterService {
     }
   }
 
-  Future<PhoneOtpResponse> checkPhone(Map<String, dynamic> requestData) async {
+  Future<Either<Failure, CheckPhoneResponse>> checkPhone(
+      Map<String, dynamic> requestData) async {
     try {
       final response = await _apiService.post(
         endPoint: 'check-phoneNumber',
         data: requestData,
       );
-      return PhoneOtpResponse.fromJson(response);
+      final checkPhoneRequest = CheckPhoneResponse.fromJson(response);
+      return Right(checkPhoneRequest);
     } on DioException catch (e) {
-      throw Exception(_handleDioError(e, "Failed to verify phone"));
+      return left(
+          ValidationFailure(message: e.message ?? 'Failed to verify phone'));
+      //throw Exception(_handleDioError(e, "Failed to verify phone"));
     }
   }
 
-  Future<Either<Failure, CheckEmailResponse>> sendEmailOTP(
+  Future<Either<Failure, CheckEmailResponse>> sendEmailOtp(
       Map<String, dynamic> requestData) async {
     try {
       final response =
@@ -63,6 +67,20 @@ class RegisterService {
       final checkEmailResponse = CheckEmailResponse.fromJson(response);
 
       return Right(checkEmailResponse); // Success case
+    } catch (e) {
+      return Left(Failure(message: e.toString())); // Failure case
+    }
+  }
+
+  Future<Either<Failure, CheckPhoneResponse>> sendPhoneOtp(
+      Map<String, dynamic> requestData) async {
+    try {
+      final response =
+          await _apiService.post(endPoint: 'send-sms-otp', data: requestData);
+
+      final checkPhoneResponse = CheckPhoneResponse.fromJson(response);
+
+      return Right(checkPhoneResponse); // Success case
     } catch (e) {
       return Left(Failure(message: e.toString())); // Failure case
     }

@@ -1,9 +1,11 @@
+import 'package:cruise/features/register/presentation/manager/register_bloc.dart';
 import 'package:cruise/features/register/presentation/views/verification_screen.dart';
 import 'package:cruise/features/register/presentation/views/widgets/register_step_one.dart';
 import 'package:cruise/features/register/presentation/views/widgets/register_step_three.dart';
 import 'package:cruise/features/register/presentation/views/widgets/register_step_two.dart';
 import 'package:cruise/util/shared/app_router.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class RegisterFlowScreen extends StatefulWidget {
@@ -45,7 +47,7 @@ class _RegisterFlowScreenState extends State<RegisterFlowScreen> {
     });
   }
 
-  void completeRegistration() {
+  void completeRegistration(BuildContext context) {
     // Handle final submission
     print("User Data:");
     print('First Name: ${firstNameController.text}');
@@ -56,6 +58,20 @@ class _RegisterFlowScreenState extends State<RegisterFlowScreen> {
     print("Country Code: $selectedCountryCode");
     print('Month, Day, Year: $selectedMonth, $selectedDay, $selectedYear');
     print('Gender: $selectedGender');
+    context.read<RegisterBloc>().add(
+          RegisterSubmitted(
+              firstName: firstNameController.text.trim(),
+              lastName: firstNameController.text.trim(),
+              password: passwordController.text.trim(),
+              confirmPassword: confirmPasswordController.text.trim(),
+              email: emailController.text.trim(),
+              phoneNumber: selectedCountryCode + phoneController.text.trim(),
+              gender: selectedGender!,
+              month: selectedMonth!,
+              day: selectedDay!,
+              year: selectedYear!),
+        );
+
     GoRouter.of(context).push(AppRouter.kLoginScreen);
   }
 
@@ -113,7 +129,8 @@ class _RegisterFlowScreenState extends State<RegisterFlowScreen> {
           // Handle OTP verification
           print("OTP: \$otp");
           print('Registration Complete');
-          completeRegistration();
+
+          completeRegistration(context);
         },
         title: 'Verify your phone',
         subtitle: 'Enter the 4-digit code sent to your phone',

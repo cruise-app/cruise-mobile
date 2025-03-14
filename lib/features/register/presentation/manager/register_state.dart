@@ -43,18 +43,19 @@ final class RegisterStepThreeStateFailure extends RegisterState {
   RegisterStepThreeStateFailure(this.message);
 }
 
-final class EmailVerificationStateSuccess extends RegisterState {}
+final class OtpVerificationStateSuccess extends RegisterState {}
 
-final class PhoneVerificationStateSuccess extends RegisterState {}
-
-final class EmailVerificationStateFailure extends RegisterState {
+final class OtpVerificationStateFailure extends RegisterState {
   final String message;
 
-  EmailVerificationStateFailure(this.message);
+  OtpVerificationStateFailure(this.message);
 }
 
-final class PhoneVerificationStateFailure extends RegisterState {
+final class RegisterSuccess extends RegisterState {}
+
+final class RegisterFailure extends RegisterState {
   final String message;
-
-  PhoneVerificationStateFailure(this.message);
+  RegisterFailure({required this.message});
 }
+
+final class RegisterLoading extends RegisterState {}
