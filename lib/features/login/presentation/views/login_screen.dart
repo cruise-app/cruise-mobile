@@ -15,8 +15,25 @@ import 'package:cruise/util/shared/widgets/go_back_button.dart';
 import 'package:cruise/util/shared/widgets/page_layout.dart';
 import 'package:cruise/features/login/presentation/views/widgets/bottom_alternative.dart';
 
-class LoginScreen extends StatelessWidget {
+// ignore: must_be_immutable
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  TextEditingController emailController = TextEditingController();
+
+  TextEditingController passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -96,10 +113,16 @@ class LoginScreen extends StatelessWidget {
                         ),
                         child: Column(
                           children: [
-                            const CustomTextField(hint: 'Username'),
+                            CustomTextField(
+                              hint: 'Email',
+                              controller: emailController,
+                            ),
                             const SizedBox(height: 15),
-                            const CustomTextField(
-                                hint: 'Password', isPassword: true),
+                            CustomTextField(
+                              hint: 'Password',
+                              isPassword: true,
+                              controller: passwordController,
+                            ),
                             const SizedBox(height: 15),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.start,
@@ -118,9 +141,10 @@ class LoginScreen extends StatelessWidget {
                               action: () {
                                 final bloc = context.read<LoginBloc>();
                                 bloc.add(LoginSubmitted(
-                                  email:
-                                      "mohamedzaky970@gmail.com", // Replace with user input
-                                  password: "123456", // Replace with user input
+                                  email: emailController
+                                      .text, // Replace with user input
+                                  password: passwordController
+                                      .text, // Replace with user input
                                 ));
                               },
                               textStyle: GoogleFonts.poppins(fontSize: 16),

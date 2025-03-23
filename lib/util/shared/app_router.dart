@@ -37,7 +37,7 @@ abstract class AppRouter {
         path: kLoginScreen,
         builder: (context, state) => BlocProvider(
           create: (context) => LoginBloc(),
-          child: const LoginScreen(),
+          child: LoginScreen(),
         ),
       ),
       GoRoute(
