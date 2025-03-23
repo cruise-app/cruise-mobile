@@ -1,5 +1,6 @@
 import 'package:cruise/features/register/data/models/check_email.dart';
 import 'package:cruise/features/register/data/models/check_phone.dart';
+import 'package:cruise/features/register/data/models/check_username.dart';
 import 'package:cruise/features/register/data/models/verify_otp.dart';
 import 'package:cruise/features/register/data/services/register_service.dart';
 import 'package:cruise/util/shared/failure_model.dart';
@@ -20,6 +21,12 @@ class VerificationUsecase {
       CheckPhoneRequest request) async {
     print("The json now looks like this : ${request.toJson()}");
     return await registerService.checkPhone(request.toJson());
+  }
+
+  Future<Either<Failure, CheckUsernameResponse>> usernameAvailabilityCheck(
+      CheckUsernameRequest request) async {
+    print("The json now looks like this : ${request.toJson()}");
+    return await registerService.checkUsername(request.toJson());
   }
 
   Future<void> sendEmailOtp(CheckEmailRequest request) async {

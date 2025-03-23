@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:cruise/features/register/data/models/check_email.dart';
 import 'package:cruise/features/register/data/models/check_phone.dart';
+import 'package:cruise/features/register/data/models/check_username.dart';
 import 'package:cruise/features/register/data/models/register_request.dart';
 import 'package:cruise/features/register/data/models/register_response.dart';
 import 'package:cruise/features/register/data/models/verify_otp.dart';
@@ -35,6 +36,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
       _registerRequest = RegisterRequest(
         firstName: event.firstName,
         lastName: event.lastName,
+        userName: event.userName,
         password: event.password,
         email: event.email,
         phoneNumber: event.phoneNumber,
@@ -53,7 +55,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
   }
 
   void _validateRegisterStepOne(
-      RegisterStepOneSubmitted event, Emitter<RegisterState> emit) {
+      RegisterStepOneSubmitted event, Emitter<RegisterState> emit) async {
     if (event.firstName.isEmpty) {
       emit(RegisterStepOneStateFailure('First name is required'));
     } else if (event.lastName.isEmpty) {
@@ -66,9 +68,17 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
       emit(RegisterStepOneStateFailure('Day is required'));
     } else if (event.year.isEmpty) {
       emit(RegisterStepOneStateFailure('Year is required'));
-    } else {
-      emit(RegisterStepOneStateSuccess());
+    } else if (event.userName.isEmpty) {
+      emit(RegisterStepOneStateFailure('Username is required'));
     }
+
+    final response = await verificationUsecase.usernameAvailabilityCheck(
+        CheckUsernameRequest(username: event.userName));
+
+    response.fold(
+      (failure) => emit(RegisterStepOneStateFailure(failure.message)),
+      (success) => emit(RegisterStepOneStateSuccess()),
+    );
   }
 
   Future<void> _validateRegisterStepTwo(

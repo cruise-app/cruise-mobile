@@ -17,14 +17,27 @@ class RegisterFlowScreen extends StatefulWidget {
 }
 
 class _RegisterFlowScreenState extends State<RegisterFlowScreen> {
+  @override
+  void dispose() {
+    firstNameController.dispose();
+    lastNameController.dispose();
+    passwordController.dispose();
+    confirmPasswordController.dispose();
+    userNameController.dispose();
+    emailController.dispose();
+    phoneController.dispose();
+    super.dispose();
+  }
+
   int currentStep = 0;
 
   // Store user input across steps
   final TextEditingController firstNameController = TextEditingController();
-  final TextEditingController secondNameController = TextEditingController();
+  final TextEditingController lastNameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController =
       TextEditingController();
+  final TextEditingController userNameController = TextEditingController();
   String? selectedGender;
   String? selectedMonth, selectedDay, selectedYear;
   final TextEditingController emailController = TextEditingController();
@@ -51,7 +64,8 @@ class _RegisterFlowScreenState extends State<RegisterFlowScreen> {
     // Handle final submission
     print("User Data:");
     print('First Name: ${firstNameController.text}');
-    print('Second Name: ${secondNameController.text}');
+    print('Last Name: ${lastNameController.text}');
+    print('Username: ${userNameController.text}');
     print("Email: ${emailController.text}");
     print("Password: ${passwordController.text}");
     print("Phone: ${phoneController.text}");
@@ -62,6 +76,7 @@ class _RegisterFlowScreenState extends State<RegisterFlowScreen> {
           RegisterSubmitted(
               firstName: firstNameController.text.trim(),
               lastName: firstNameController.text.trim(),
+              userName: userNameController.text.trim(),
               password: passwordController.text.trim(),
               confirmPassword: confirmPasswordController.text.trim(),
               email: emailController.text.trim(),
@@ -80,7 +95,8 @@ class _RegisterFlowScreenState extends State<RegisterFlowScreen> {
     List<Widget> steps = [
       RegisterStepOne(
         firstNameController: firstNameController,
-        secondNameController: secondNameController,
+        lastNameController: lastNameController,
+        userNameController: userNameController,
         selectedGender: selectedGender,
         selectedMonth: selectedMonth,
         selectedDay: selectedDay,

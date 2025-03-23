@@ -6,6 +6,7 @@ sealed class RegisterEvent {}
 class RegisterSubmitted extends RegisterEvent {
   final String firstName;
   final String lastName;
+  final String userName;
   final String password;
   final String confirmPassword;
   final String email;
@@ -18,6 +19,7 @@ class RegisterSubmitted extends RegisterEvent {
   RegisterSubmitted(
       {required this.firstName,
       required this.lastName,
+      required this.userName,
       required this.password,
       required this.confirmPassword,
       required this.email,
@@ -35,6 +37,7 @@ class RegisterStepOneSubmitted extends RegisterEvent {
   final String month;
   final String day;
   final String year;
+  final String userName;
 
   RegisterStepOneSubmitted(
       {required this.firstName,
@@ -42,7 +45,8 @@ class RegisterStepOneSubmitted extends RegisterEvent {
       required this.gender,
       required this.month,
       required this.day,
-      required this.year});
+      required this.year,
+      required this.userName});
 }
 
 class RegisterStepTwoSubmitted extends RegisterEvent {

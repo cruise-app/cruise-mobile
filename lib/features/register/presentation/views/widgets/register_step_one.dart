@@ -13,7 +13,8 @@ import 'package:google_fonts/google_fonts.dart';
 class RegisterStepOne extends StatelessWidget {
   final Function onNext;
   final TextEditingController firstNameController;
-  final TextEditingController secondNameController;
+  final TextEditingController lastNameController;
+  final TextEditingController userNameController;
   String? selectedGender;
   String? selectedMonth, selectedDay, selectedYear;
   final ValueChanged<String?> onSelectedMonthChanged,
@@ -25,7 +26,8 @@ class RegisterStepOne extends StatelessWidget {
     required this.onNext,
     super.key,
     required this.firstNameController,
-    required this.secondNameController,
+    required this.lastNameController,
+    required this.userNameController,
     this.selectedGender,
     this.selectedMonth,
     this.selectedDay,
@@ -55,8 +57,9 @@ class RegisterStepOne extends StatelessWidget {
             CustomTextField(
                 hint: 'First Name', controller: firstNameController),
             const SizedBox(height: 20),
-            CustomTextField(
-                hint: 'Second Name', controller: secondNameController),
+            CustomTextField(hint: 'Last Name', controller: lastNameController),
+            const SizedBox(height: 20),
+            CustomTextField(hint: 'User Name', controller: userNameController),
             const SizedBox(height: 20),
             SizedBox(
               width: double.infinity,
@@ -116,7 +119,8 @@ class RegisterStepOne extends StatelessWidget {
                 action: () {
                   context.read<RegisterBloc>().add(RegisterStepOneSubmitted(
                         firstName: firstNameController.text,
-                        lastName: secondNameController.text,
+                        lastName: lastNameController.text,
+                        userName: userNameController.text,
                         gender: selectedGender ?? '',
                         month: selectedMonth ?? '',
                         day: selectedDay ?? '',
