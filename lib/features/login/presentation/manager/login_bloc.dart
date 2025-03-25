@@ -1,6 +1,5 @@
 import 'package:cruise/features/login/data/models/login_request.dart';
 import 'package:cruise/features/login/domain/usecases/login_usecase.dart';
-import 'package:cruise/util/shared/failure_model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 part 'login_event.dart';

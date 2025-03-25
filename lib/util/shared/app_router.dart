@@ -1,6 +1,8 @@
-import 'package:cruise/features/create_password/create_password_screen.dart';
-import 'package:cruise/features/email_verification_code/email_verification_code_screen.dart';
-import 'package:cruise/features/forget_password/forget_password_screen.dart';
+import 'package:cruise/features/forget_password/presentation/views/forget_password_flow.dart';
+import 'package:cruise/features/forget_password/presentation/views/forget_step_three.dart';
+import 'package:cruise/features/forget_password/presentation/manager/forget_password_bloc.dart';
+import 'package:cruise/features/forget_password/presentation/views/forget_step_two.dart';
+import 'package:cruise/features/forget_password/presentation/views/forget_step_one.dart';
 import 'package:cruise/features/lobby/lobby_screen.dart';
 import 'package:cruise/features/login/presentation/manager/login_bloc.dart';
 
@@ -37,20 +39,14 @@ abstract class AppRouter {
         path: kLoginScreen,
         builder: (context, state) => BlocProvider(
           create: (context) => LoginBloc(),
-          child: LoginScreen(),
+          child: const LoginScreen(),
         ),
       ),
       GoRoute(
         path: kForgetPasswordScreen,
-        builder: (context, state) => const ForgetPasswordScreen(),
-      ),
-      GoRoute(
-        path: kEmailVerificationCodeScreen,
-        builder: (context, state) => const EmailVerificationCodeScreen(),
-      ),
-      GoRoute(
-        path: kCreatePasswordScreen,
-        builder: (context, state) => const CreatePasswordScreen(),
+        builder: (context, state) => BlocProvider(
+            create: (context) => ForgetPasswordBloc(),
+            child: ForgetPasswordFlow()),
       ),
     ],
   );
