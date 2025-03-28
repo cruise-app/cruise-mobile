@@ -1,5 +1,4 @@
 import 'package:cruise/features/forget_password/presentation/manager/forget_password_bloc.dart';
-import 'package:cruise/features/forget_password/presentation/views/forget_step_two.dart';
 import 'package:cruise/util/responsive_manager/responsive_init.dart';
 import 'package:cruise/util/shared/app_router.dart';
 import 'package:cruise/util/shared/colors.dart';

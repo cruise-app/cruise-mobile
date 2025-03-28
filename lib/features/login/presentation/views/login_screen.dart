@@ -141,10 +141,9 @@ class _LoginScreenState extends State<LoginScreen> {
                               action: () {
                                 final bloc = context.read<LoginBloc>();
                                 bloc.add(LoginSubmitted(
-                                  email: emailController
-                                      .text, // Replace with user input
-                                  password: passwordController
-                                      .text, // Replace with user input
+                                  email:
+                                      'mohamedzaky970@gmail.com', // Replace with user input
+                                  password: "123456", // Replace with user input
                                 ));
                               },
                               textStyle: GoogleFonts.poppins(fontSize: 16),

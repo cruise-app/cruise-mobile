@@ -58,18 +58,25 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
       RegisterStepOneSubmitted event, Emitter<RegisterState> emit) async {
     if (event.firstName.isEmpty) {
       emit(RegisterStepOneStateFailure('First name is required'));
+      return;
     } else if (event.lastName.isEmpty) {
       emit(RegisterStepOneStateFailure('Last name is required'));
+      return;
     } else if (event.gender.isEmpty) {
       emit(RegisterStepOneStateFailure('Gender is required'));
+      return;
     } else if (event.month.isEmpty) {
       emit(RegisterStepOneStateFailure('Month is required'));
+      return;
     } else if (event.day.isEmpty) {
       emit(RegisterStepOneStateFailure('Day is required'));
+      return;
     } else if (event.year.isEmpty) {
       emit(RegisterStepOneStateFailure('Year is required'));
+      return;
     } else if (event.userName.isEmpty) {
       emit(RegisterStepOneStateFailure('Username is required'));
+      return;
     }
 
     final response = await verificationUsecase.usernameAvailabilityCheck(

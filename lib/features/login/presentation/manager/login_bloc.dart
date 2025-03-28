@@ -19,6 +19,15 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     print('Hello iam in the login bloc');
     try {
       emit(LoginLoadingState());
+      final RegExp emailRegex = RegExp(
+          r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*$");
+      if (event.email.isEmpty || event.password.isEmpty) {
+        emit(LoginFailureState(message: 'Please fill in all fields.'));
+        return;
+      } else if (!emailRegex.hasMatch(event.email)) {
+        emit(LoginFailureState(message: 'Invalid email address.'));
+        return;
+      }
       print('Hello iam in the login bloc');
       final response = await loginUsecase.call(
         LoginRequest(
@@ -34,7 +43,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         ),
         (success) => emit(
           LoginSuccessState(
-            message: success.message,
+            message: success.message ?? "Login Successful",
           ),
         ),
       );

@@ -5,7 +5,7 @@ class Failure {
 
   factory Failure.fromJson(Map<String, dynamic> json) {
     return Failure(
-      message: json['error'] ?? 'Unknown error',
+      message: json['message'] ?? 'Unknown error',
     );
   }
 }

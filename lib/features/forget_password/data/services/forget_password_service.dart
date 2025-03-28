@@ -4,7 +4,6 @@ import 'package:cruise/features/register/data/models/verify_otp.dart';
 import 'package:cruise/util/shared/api_service.dart';
 import 'package:cruise/util/shared/failure_model.dart';
 import 'package:dartz/dartz.dart';
-import 'package:dio/dio.dart';
 
 class ForgetPasswordService {
   final ApiService _apiService;
@@ -18,9 +17,14 @@ class ForgetPasswordService {
         endPoint: '${_preUrl}verify-email',
         data: requestData,
       );
-      return Right(VerifyEmailResponse.fromJson(response));
-    } on DioException catch (e) {
-      return Left(Failure(message: e.message ?? 'Failed to verify email'));
+
+      if (response.statusCode == 200) {
+        return Right(VerifyEmailResponse.fromJson(response.data));
+      } else {
+        return Left(Failure(message: response.data['message']));
+      }
+    } catch (e) {
+      return Left(Failure(message: "Unexpected error: ${e.toString()}"));
     }
   }
 
@@ -31,9 +35,14 @@ class ForgetPasswordService {
         endPoint: '${_preUrl}verify-otp',
         data: requestData,
       );
-      return Right(VerifyOtpResponse.fromJson(response));
-    } on DioException catch (e) {
-      return Left(Failure(message: e.message ?? 'Failed to verify otp'));
+
+      if (response.statusCode == 200) {
+        return Right(VerifyOtpResponse.fromJson(response.data));
+      } else {
+        return Left(Failure(message: response.data['message']));
+      }
+    } catch (e) {
+      return Left(Failure(message: "Unexpected error: ${e.toString()}"));
     }
   }
 
@@ -44,9 +53,15 @@ class ForgetPasswordService {
         endPoint: '${_preUrl}create-new-password',
         data: requestData,
       );
-      return Right(CreatePasswordResponse.fromJson(response));
-    } on DioException catch (e) {
-      return Left(Failure(message: e.message ?? 'Failed to reset password'));
+
+      if (response.statusCode == 200) {
+        return Right(CreatePasswordResponse.fromJson(response.data));
+      } else {
+        return Left(Failure(
+            message: response.data['message'] ?? 'Password reset failed'));
+      }
+    } catch (e) {
+      return Left(Failure(message: "Unexpected error: ${e.toString()}"));
     }
   }
 }
