@@ -40,9 +40,9 @@ class _LoginScreenState extends State<LoginScreen> {
     return BlocConsumer<LoginBloc, LoginState>(
       listener: (context, state) {
         if (state is LoginSuccessState) {
-          // Navigate to the home screen on success
-          //GoRouter.of(context).pushReplacement(AppRouter.kHomeScreen);
           print('Login Success');
+          GoRouter.of(context)
+              .pushReplacement(AppRouter.kBottomNavigationScreen);
         } else if (state is LoginFailureState) {
           // Show error message
           ScaffoldMessenger.of(context).showSnackBar(
@@ -142,8 +142,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                 final bloc = context.read<LoginBloc>();
                                 bloc.add(LoginSubmitted(
                                   email:
-                                      'mohamedzaky970@gmail.com', // Replace with user input
-                                  password: "123456", // Replace with user input
+                                      "mohamedzaky970@gmail.com", // Replace with user input
+                                  password:
+                                      "12345678", // Replace with user input
                                 ));
                               },
                               textStyle: GoogleFonts.poppins(fontSize: 16),

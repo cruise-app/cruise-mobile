@@ -75,7 +75,7 @@ class _RegisterFlowScreenState extends State<RegisterFlowScreen> {
     context.read<RegisterBloc>().add(
           RegisterSubmitted(
               firstName: firstNameController.text.trim(),
-              lastName: firstNameController.text.trim(),
+              lastName: lastNameController.text.trim(),
               userName: userNameController.text.trim(),
               password: passwordController.text.trim(),
               confirmPassword: confirmPasswordController.text.trim(),

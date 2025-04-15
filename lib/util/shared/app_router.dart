@@ -9,6 +9,7 @@ import 'package:cruise/features/login/presentation/manager/login_bloc.dart';
 import 'package:cruise/features/register/presentation/manager/register_bloc.dart';
 
 import 'package:cruise/features/register/presentation/views/register_flow_screen.dart';
+import 'package:cruise/util/shared/widgets/bottom_navigation_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../features/login/presentation/views/login_screen.dart';
@@ -21,6 +22,7 @@ abstract class AppRouter {
   static const kForgetPasswordScreen = '/ForgetPasswordScreen';
   static const kEmailVerificationCodeScreen = '/EmailVerificationCodeScreen';
   static const kCreatePasswordScreen = '/CreatePasswordScreen';
+  static const kBottomNavigationScreen = '/BottomNavigationScreen';
 
   static final GoRouter router = GoRouter(
     routes: [
@@ -46,8 +48,11 @@ abstract class AppRouter {
         path: kForgetPasswordScreen,
         builder: (context, state) => BlocProvider(
             create: (context) => ForgetPasswordBloc(),
-            child: ForgetPasswordFlow()),
+            child: const ForgetPasswordFlow()),
       ),
+      GoRoute(
+          path: kBottomNavigationScreen,
+          builder: (context, state) => const BottomNavigationScreen()),
     ],
   );
 }
