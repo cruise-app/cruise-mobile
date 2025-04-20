@@ -32,6 +32,7 @@ dependencies:
   dartz: ^0.10.1
   google_nav_bar: ^5.0.7
   line_icons: ^2.0.3
+  google_maps_flutter: ^2.10.1
 
 dev_dependencies:
   flutter_test:

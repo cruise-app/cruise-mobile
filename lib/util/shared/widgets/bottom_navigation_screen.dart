@@ -1,3 +1,4 @@
+import 'package:cruise/features/carpooling/presentation/views/carpooling_screen.dart';
 import 'package:cruise/util/shared/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -21,10 +22,7 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
       'Home',
       style: optionStyle,
     ),
-    Text(
-      'Cruise',
-      style: optionStyle,
-    ),
+    GoogleMapFlutter(),
     Text(
       'Rent',
       style: optionStyle,
