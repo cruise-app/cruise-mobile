@@ -1,0 +1,2 @@
+D:/StudioProjects/CRUISE/android/app/.cxx/RelWithDebInfo/y1k4h5m4/x86_64/CMakeFiles/edit_cache.dir
+D:/StudioProjects/CRUISE/android/app/.cxx/RelWithDebInfo/y1k4h5m4/x86_64/CMakeFiles/rebuild_cache.dir

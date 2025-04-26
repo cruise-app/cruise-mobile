@@ -1,6 +1,7 @@
 import 'package:cruise/features/login/data/models/login_request.dart';
 import 'package:cruise/features/login/domain/usecases/login_usecase.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive/hive.dart';
 
 part 'login_event.dart';
 part 'login_state.dart';
@@ -11,7 +12,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   LoginBloc()
       : loginUsecase = LoginUsecase(),
         super(LoginInitial()) {
-    on<LoginSubmitted>(_loginUser);
+    on<LoginSubmitted>((event, emit) async => await _loginUser(event, emit));
   }
 
   Future<void> _loginUser(
@@ -35,18 +36,28 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
           password: event.password,
         ),
       );
-      response.fold(
-        (failure) => emit(
-          LoginFailureState(
-            message: failure.message,
-          ),
-        ),
-        (success) => emit(
+      await response.fold(
+          (failure) async => emit(
+                LoginFailureState(
+                  message: failure.message,
+                ),
+              ), (success) async {
+        // Get the token from the response and save it in Hive
+        print(success.token);
+        print(success.user);
+        print(success.user.id);
+        print(success.user.userName);
+        print(success.user.email);
+        var box = Hive.box('userBox');
+        await box.put('token', success.token);
+        await box.put('userModel', success.user);
+
+        emit(
           LoginSuccessState(
             message: success.message ?? "Login Successful",
           ),
-        ),
-      );
+        );
+      });
     } catch (e) {
       emit(LoginFailureState(
           message: 'Something went wrong. Please try again.'));

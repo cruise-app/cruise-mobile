@@ -1,4 +1,6 @@
 import 'package:cruise/features/carpooling/presentation/views/carpooling_screen.dart';
+import 'package:cruise/features/carpooling/presentation/views/widgets/create_trip_screen.dart';
+import 'package:cruise/features/settings/settings_screen.dart';
 import 'package:cruise/util/shared/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -22,33 +24,30 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
       'Home',
       style: optionStyle,
     ),
-    GoogleMapFlutter(),
+    CarpoolingScreen(),
     Text(
       'Rent',
       style: optionStyle,
     ),
-    Text(
-      'Settings',
-      style: optionStyle,
-    ),
+    SettingsScreen(),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: MyColors.lightGrey,
+        backgroundColor: MyColors.black,
         body: Center(
           child: _widgetOptions.elementAt(_selectedIndex),
         ),
         bottomNavigationBar: Container(
-          color: Colors.black,
+          color: MyColors.lightYellow,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
             child: GNav(
-                backgroundColor: Colors.black,
-                color: Colors.white,
-                activeColor: Colors.white,
-                tabBackgroundColor: Colors.grey[800]!,
+                backgroundColor: MyColors.lightYellow,
+                color: Colors.black,
+                activeColor: Colors.black,
+                tabBackgroundColor: Colors.grey[400]!,
                 padding: const EdgeInsets.all(16),
                 gap: 5,
                 onTabChange: (value) => setState(() {

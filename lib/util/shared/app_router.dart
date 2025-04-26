@@ -9,13 +9,14 @@ import 'package:cruise/features/login/presentation/manager/login_bloc.dart';
 import 'package:cruise/features/register/presentation/manager/register_bloc.dart';
 
 import 'package:cruise/features/register/presentation/views/register_flow_screen.dart';
+import 'package:cruise/features/splash_screen/splash_screen.dart';
 import 'package:cruise/util/shared/widgets/bottom_navigation_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../features/login/presentation/views/login_screen.dart';
 
 abstract class AppRouter {
-  static const kLobbyScreen = '/';
+  static const kLobbyScreen = '/LobbyScreen';
   static const kRegisterFlow = '/RegisterFlow';
   static const kEmailVerificationScreen = '/RegisterVerificationScreen';
   static const kLoginScreen = '/LoginScreen';
@@ -23,9 +24,14 @@ abstract class AppRouter {
   static const kEmailVerificationCodeScreen = '/EmailVerificationCodeScreen';
   static const kCreatePasswordScreen = '/CreatePasswordScreen';
   static const kBottomNavigationScreen = '/BottomNavigationScreen';
+  static const kSplashScreen = '/';
 
   static final GoRouter router = GoRouter(
     routes: [
+      GoRoute(
+        path: kSplashScreen,
+        builder: (context, state) => const SplashScreen(),
+      ),
       GoRoute(
         path: kLobbyScreen,
         builder: (context, state) => const LobbyScreen(),
