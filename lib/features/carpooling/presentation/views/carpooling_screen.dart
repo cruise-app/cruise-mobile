@@ -3,7 +3,7 @@ import 'package:cruise/features/carpooling/presentation/views/widgets/upcoming_t
 import 'package:cruise/features/carpooling/presentation/views/widgets/welcome_message_widget.dart';
 import 'package:cruise/util/shared/colors.dart';
 import 'package:flutter/material.dart';
-import 'package:cruise/features/carpooling/presentation/views/widgets/create_trip_screen.dart';
+import 'package:cruise/features/carpooling/presentation/views/create_trip_screen.dart';
 
 class CarpoolingScreen extends StatefulWidget {
   const CarpoolingScreen({super.key});
@@ -75,7 +75,7 @@ class _CarpoolingScreenState extends State<CarpoolingScreen> {
                       vertical: 14,
                       horizontal: 16,
                     ),
-                    backgroundColor: Colors.blue.shade200,
+                    backgroundColor: Colors.blue,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),

@@ -1,5 +1,5 @@
 import 'package:cruise/features/carpooling/presentation/views/carpooling_screen.dart';
-import 'package:cruise/features/carpooling/presentation/views/widgets/create_trip_screen.dart';
+import 'package:cruise/features/carpooling/presentation/views/create_trip_screen.dart';
 import 'package:cruise/features/settings/settings_screen.dart';
 import 'package:cruise/util/shared/colors.dart';
 import 'package:flutter/material.dart';

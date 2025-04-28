@@ -2,7 +2,7 @@ import 'package:cruise/features/register/data/models/check_username.dart';
 import 'package:cruise/features/register/data/models/verify_otp.dart';
 import 'package:cruise/util/shared/failure_model.dart';
 import 'package:dartz/dartz.dart';
-import 'package:dio/dio.dart';
+
 import 'package:cruise/features/register/data/models/check_email.dart';
 import 'package:cruise/features/register/data/models/check_phone.dart';
 import 'package:cruise/util/shared/api_service.dart';
