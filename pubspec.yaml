@@ -36,6 +36,7 @@ dependencies:
   path_provider: ^2.0.15
   geolocator: ^14.0.0
   board_datetime_picker: ^2.5.0
+  omni_datetime_picker: ^2.1.1
 
 dev_dependencies:
   flutter_test:

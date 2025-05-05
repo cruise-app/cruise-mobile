@@ -1,14 +1,21 @@
 import 'package:cruise/features/carpooling/presentation/manager/create_trip_bloc.dart';
+import 'package:cruise/features/carpooling/presentation/views/widgets/date_time_widget.dart';
+import 'package:cruise/features/login/data/models/user_model.dart';
 import 'package:cruise/util/shared/colors.dart';
+import 'package:cruise/util/shared/widgets.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:omni_datetime_picker/omni_datetime_picker.dart';
 import 'dart:async';
 
 // ignore: must_be_immutable
 class CreateTripDraggableSheet extends StatefulWidget {
-  const CreateTripDraggableSheet({super.key});
+  const CreateTripDraggableSheet({super.key, required this.user});
+  final UserModel? user;
 
   @override
+  // ignore: library_private_types_in_public_api
   _CreateTripDraggableSheetState createState() =>
       _CreateTripDraggableSheetState();
 }
@@ -16,11 +23,19 @@ class CreateTripDraggableSheet extends StatefulWidget {
 class _CreateTripDraggableSheetState extends State<CreateTripDraggableSheet> {
   TextEditingController startLocationController = TextEditingController();
   TextEditingController endLocationController = TextEditingController();
+  DateTime? selectedDateTimeFromChild;
   List<String> suggestions = [];
   FocusNode startLocationFocusNode = FocusNode();
   FocusNode endLocationFocusNode = FocusNode();
   String? activeField; // Track which field is active
   Timer? _debounce; // Timer for debouncing
+  List<String> vehicleTypes = [
+    'Sedan',
+    'SUV',
+    'Minibus',
+    "Motorcycle",
+  ];
+  String? selectedVehicleType; // Track selected vehicle type
 
   void textFieldLogic(String value, String field) {
     setState(() {
@@ -101,6 +116,53 @@ class _CreateTripDraggableSheetState extends State<CreateTripDraggableSheet> {
                           TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 10),
+
+                    // Date and Time field
+                    DateTimeWidget(
+                      onDateTimeSelected: (dateTime) {
+                        setState(() {
+                          selectedDateTimeFromChild = dateTime;
+                        });
+                        print('Selected DateTime: $dateTime');
+                      },
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: MyColors.black, width: 3),
+                        color: MyColors.lightYellow,
+                      ),
+                      child: ButtonTheme(
+                        alignedDropdown: true,
+                        child: DropdownButton<String>(
+                          icon: const Icon(Icons.arrow_drop_down),
+                          isExpanded: true,
+                          underline: const SizedBox(),
+                          hint: const Text("Select Vehicle Type"),
+                          value: selectedVehicleType,
+                          onChanged: (value) {
+                            setState(() {
+                              selectedVehicleType = value;
+                            });
+                          },
+                          items: vehicleTypes
+                              .map((type) => DropdownMenuItem(
+                                    value: type,
+                                    child: Text(type),
+                                  ))
+                              .toList(),
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(
+                      height: 10,
+                    ),
                     Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
@@ -149,7 +211,6 @@ class _CreateTripDraggableSheetState extends State<CreateTripDraggableSheet> {
                         ],
                       ),
                     ),
-                    const SizedBox(height: 20),
 
                     // Handle event without BlocBuilder
                     BlocListener<CreateTripBloc, CreateTripState>(
@@ -194,6 +255,70 @@ class _CreateTripDraggableSheetState extends State<CreateTripDraggableSheet> {
                             ),
                         ],
                       ),
+                    ),
+                    const SizedBox(
+                      height: 50,
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.5,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: MyColors.black, width: 3),
+                      ),
+                      child: ActionButton(
+                        message: 'Create',
+                        action: () {
+                          print(
+                              "Start Location: ${startLocationController.text}");
+                          print("End Location: ${endLocationController.text}");
+                          print("Selected Vehicle Type: $selectedVehicleType");
+                          print(
+                              "Date and Time: ${selectedDateTimeFromChild?.toUtc().toString()}");
+                          context.read<CreateTripBloc>().add(
+                                CreateTripSubmitted(
+                                  driverID: widget.user!.id,
+                                  departureTime: selectedDateTimeFromChild!
+                                      .toUtc()
+                                      .toString(),
+                                  startLocationName:
+                                      startLocationController.text,
+                                  endLocationName: endLocationController.text,
+                                  vehicleType: selectedVehicleType!,
+                                ),
+                              );
+                        },
+                        textStyle: const TextStyle(
+                          color: MyColors.black,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        height: 35,
+                        color: MyColors.lightYellow,
+                      ),
+                    ),
+                    BlocBuilder<CreateTripBloc, CreateTripState>(
+                      builder: (context, state) {
+                        if (state is CreateTripSuccessState) {
+                          return Text(
+                            state.message,
+                            style: const TextStyle(
+                              color: MyColors.black,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          );
+                        } else if (state is CreateTripErrorState) {
+                          return Text(
+                            state.errorMessage,
+                            style: const TextStyle(
+                              color: Colors.red,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          );
+                        }
+                        return const SizedBox(); // Return an empty widget if no state matches
+                      },
                     ),
                   ],
                 ),

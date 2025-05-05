@@ -1,14 +1,15 @@
+import 'package:cruise/features/carpooling/data/models/create_trip_response.dart';
 import 'package:cruise/util/shared/api_service.dart';
 import 'package:cruise/util/shared/failure_model.dart';
 import 'package:dartz/dartz.dart';
 
-class CreateTripService {
+class CarpoolingService {
   final ApiService _apiService;
   final String _preUrl = 'carpooling/';
 
-  CreateTripService() : _apiService = ApiService();
+  CarpoolingService() : _apiService = ApiService();
 
-  Future<Either<Failure, Map<String, dynamic>>> createTrip(
+  Future<Either<Failure, CreateTripResponse>> createTrip(
       Map<String, dynamic> requestData) async {
     try {
       final response = await _apiService.post(
@@ -17,7 +18,7 @@ class CreateTripService {
       );
 
       if (response.statusCode == 200) {
-        return Right(response.data);
+        return Right(CreateTripResponse.fromJson(response.data));
       } else {
         return Left(Failure(message: response.data['message']));
       }

@@ -1,11 +1,11 @@
-import 'package:cruise/features/carpooling/data/services/create_trip_service.dart';
+import 'package:cruise/features/carpooling/data/services/carpooling_services.dart';
 import 'package:cruise/util/shared/failure_model.dart';
 import 'package:dartz/dartz.dart';
 
 class PlaceSuggestionUsecase {
-  final CreateTripService _createTripService;
+  final CarpoolingService _createTripService;
 
-  PlaceSuggestionUsecase() : _createTripService = CreateTripService();
+  PlaceSuggestionUsecase() : _createTripService = CarpoolingService();
 
   Future<Either<Failure, List<String>>> getPlaceSuggestions(
       String query) async {

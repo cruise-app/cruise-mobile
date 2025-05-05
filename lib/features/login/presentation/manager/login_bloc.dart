@@ -54,7 +54,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
         emit(
           LoginSuccessState(
-            message: success.message ?? "Login Successful",
+            message: success.message,
           ),
         );
       });

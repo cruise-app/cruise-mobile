@@ -87,7 +87,9 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
                   // Bottom Draggable Sheet
                   BlocProvider(
                     create: (context) => CreateTripBloc(),
-                    child: const CreateTripDraggableSheet(),
+                    child: CreateTripDraggableSheet(
+                      user: user,
+                    ),
                   ),
                 ],
               ),

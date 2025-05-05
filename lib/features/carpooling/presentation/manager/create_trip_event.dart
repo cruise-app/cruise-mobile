@@ -5,20 +5,18 @@ part of 'create_trip_bloc.dart';
 sealed class CreateTripEvent {}
 
 final class CreateTripSubmitted extends CreateTripEvent {
-  final String tripName;
-  final String tripDate;
-  final String tripTime;
-  final String tripLocation;
-  final String tripDestination;
-  final int availableSeats;
+  final String driverID;
+  final String departureTime;
+  final String startLocationName;
+  final String endLocationName;
+  final String vehicleType;
 
   CreateTripSubmitted({
-    required this.tripName,
-    required this.tripDate,
-    required this.tripTime,
-    required this.tripLocation,
-    required this.tripDestination,
-    required this.availableSeats,
+    required this.driverID,
+    required this.departureTime,
+    required this.startLocationName,
+    required this.endLocationName,
+    required this.vehicleType,
   });
 }
 
