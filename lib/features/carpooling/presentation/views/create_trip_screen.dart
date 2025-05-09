@@ -21,9 +21,57 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
   LatLng? myCurrentLocation;
   GoogleMapController? mapController;
   Set<Marker> markers = {};
+  Set<Polyline> polylines = {}; // Store the polyline here
   late var box;
   UserModel? user;
   String? token;
+
+  late List<LatLng> polylineCoordinates;
+  late LatLng startLocation;
+  late LatLng endLocation;
+
+  void handlePolylineUpdate(
+      List<LatLng> polyline, LatLng startLocation, LatLng endLocation) {
+    setState(() {
+      polylineCoordinates = polyline;
+      this.startLocation = startLocation;
+      this.endLocation = endLocation;
+
+      // Clear previous polylines and add new one
+      polylines.clear();
+      polylines.add(
+        Polyline(
+          polylineId: PolylineId('route'),
+          visible: true,
+          points: polylineCoordinates,
+          color: Colors.blue, // Choose the color of your polyline
+          width: 5, // Width of the polyline
+        ),
+      );
+      markers.clear();
+      markers.add(
+        Marker(
+          icon: BitmapDescriptor.defaultMarkerWithHue(
+              BitmapDescriptor.hueRed), // Change the color of the marker
+          markerId: const MarkerId('startLocation'),
+          position: startLocation,
+          infoWindow: const InfoWindow(title: 'Start Location'),
+        ),
+      );
+      markers.add(
+        Marker(
+          icon:
+              BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
+          markerId: const MarkerId('endLocation'),
+          position: endLocation,
+          infoWindow: const InfoWindow(title: 'End Location'),
+        ),
+      );
+    });
+    print("Polyline updated: $polyline");
+    print("Start Location: $startLocation");
+    print("End Location: $endLocation");
+  }
 
   // FocusNode for controlling the focus of the TextField
   FocusNode startLocationFocusNode = FocusNode();
@@ -74,11 +122,11 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
               ))
             : Stack(
                 children: [
-                  // Top Black AppBar
-
+                  // Google Map Widget with Polyline
                   GoogleMapsWidget(
                     myCurrentLocation: myCurrentLocation!,
                     markers: markers,
+                    polyline: polylines, // Pass the polylines to the map
                     onMapCreated: (controller) {
                       mapController = controller;
                     },
@@ -89,6 +137,7 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
                     create: (context) => CreateTripBloc(),
                     child: CreateTripDraggableSheet(
                       user: user,
+                      onPolylineReady: handlePolylineUpdate,
                     ),
                   ),
                 ],

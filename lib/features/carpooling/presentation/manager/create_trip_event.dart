@@ -20,6 +20,13 @@ final class CreateTripSubmitted extends CreateTripEvent {
   });
 }
 
+final class FetchPolylineForReview extends CreateTripEvent {
+  final String startLocationName;
+  final String endLocationName;
+  FetchPolylineForReview(
+      {required this.startLocationName, required this.endLocationName});
+}
+
 final class SearchingLocation extends CreateTripEvent {
   final String location;
   SearchingLocation({required this.location});

@@ -79,4 +79,24 @@ class ApiService {
       );
     }
   }
+
+  Future<Response> get({
+    required String endPoint,
+    Map<String, dynamic>? data,
+  }) async {
+    try {
+      print("GET: ${_dio.options.baseUrl}$endPoint");
+      final response = await _dio.get(endPoint, data: data);
+      return response;
+    } on DioException catch (e) {
+      throw DioException(
+        requestOptions: e.requestOptions,
+        response: Response(
+          requestOptions: e.requestOptions,
+          statusCode: 500,
+          data: handleDioError(e),
+        ),
+      );
+    }
+  }
 }

@@ -3,17 +3,19 @@ import 'package:cruise/features/carpooling/presentation/views/widgets/date_time_
 import 'package:cruise/features/login/data/models/user_model.dart';
 import 'package:cruise/util/shared/colors.dart';
 import 'package:cruise/util/shared/widgets.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:omni_datetime_picker/omni_datetime_picker.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'dart:async';
 
 // ignore: must_be_immutable
 class CreateTripDraggableSheet extends StatefulWidget {
-  const CreateTripDraggableSheet({super.key, required this.user});
+  const CreateTripDraggableSheet(
+      {super.key, required this.user, required this.onPolylineReady});
   final UserModel? user;
-
+  final Function(List<LatLng> polyline, LatLng start, LatLng end)
+      onPolylineReady;
+  // Callback for polyline update
   @override
   // ignore: library_private_types_in_public_api
   _CreateTripDraggableSheetState createState() =>
@@ -57,6 +59,16 @@ class _CreateTripDraggableSheetState extends State<CreateTripDraggableSheet> {
             );
       },
     );
+  }
+
+  void getPolyLine() {
+    print("Fetching polyline for review");
+    context.read<CreateTripBloc>().add(
+          FetchPolylineForReview(
+            startLocationName: startLocationController.text,
+            endLocationName: endLocationController.text,
+          ),
+        );
   }
 
   void dispose() {
@@ -172,6 +184,10 @@ class _CreateTripDraggableSheetState extends State<CreateTripDraggableSheet> {
                         children: [
                           // Start Location field
                           TextFormField(
+                            onEditingComplete: () {
+                              print('Editing complete for start location');
+                              startLocationFocusNode.unfocus();
+                            },
                             controller: startLocationController,
                             focusNode: startLocationFocusNode,
                             cursorColor: MyColors.black,
@@ -266,24 +282,13 @@ class _CreateTripDraggableSheetState extends State<CreateTripDraggableSheet> {
                         border: Border.all(color: MyColors.black, width: 3),
                       ),
                       child: ActionButton(
-                        message: 'Create',
+                        message: 'Show Route',
                         action: () {
-                          print(
-                              "Start Location: ${startLocationController.text}");
-                          print("End Location: ${endLocationController.text}");
-                          print("Selected Vehicle Type: $selectedVehicleType");
-                          print(
-                              "Date and Time: ${selectedDateTimeFromChild?.toUtc().toString()}");
                           context.read<CreateTripBloc>().add(
-                                CreateTripSubmitted(
-                                  driverID: widget.user!.id,
-                                  departureTime: selectedDateTimeFromChild!
-                                      .toUtc()
-                                      .toString(),
+                                FetchPolylineForReview(
                                   startLocationName:
                                       startLocationController.text,
                                   endLocationName: endLocationController.text,
-                                  vehicleType: selectedVehicleType!,
                                 ),
                               );
                         },
@@ -296,29 +301,102 @@ class _CreateTripDraggableSheetState extends State<CreateTripDraggableSheet> {
                         color: MyColors.lightYellow,
                       ),
                     ),
-                    BlocBuilder<CreateTripBloc, CreateTripState>(
-                      builder: (context, state) {
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.5,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: MyColors.black, width: 3),
+                      ),
+                      child: ActionButton(
+                        message: 'Create',
+                        action: () {
+                          print(
+                              "Start Location: ${startLocationController.text}");
+                          print("End Location: ${endLocationController.text}");
+                          print("Selected Vehicle Type: $selectedVehicleType");
+                          print(
+                              "Date and Time: ${selectedDateTimeFromChild?.toUtc().toString()}");
+                          if (selectedDateTimeFromChild != null &&
+                              startLocationController.text.isNotEmpty &&
+                              endLocationController.text.isNotEmpty &&
+                              selectedVehicleType != null) {
+                            context.read<CreateTripBloc>().add(
+                                  CreateTripSubmitted(
+                                    driverID: widget.user!.id,
+                                    departureTime: selectedDateTimeFromChild!
+                                        .toUtc()
+                                        .toString(),
+                                    startLocationName:
+                                        startLocationController.text,
+                                    endLocationName: endLocationController.text,
+                                    vehicleType: selectedVehicleType!,
+                                  ),
+                                );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Please fill all fields'),
+                                backgroundColor: Colors.red,
+                                duration: Duration(seconds: 2),
+                              ),
+                            );
+                          }
+                        },
+                        textStyle: const TextStyle(
+                          color: MyColors.black,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        height: 35,
+                        color: MyColors.lightYellow,
+                      ),
+                    ),
+
+                    BlocListener<CreateTripBloc, CreateTripState>(
+                      listener: (context, state) {
                         if (state is CreateTripSuccessState) {
-                          return Text(
-                            state.message,
-                            style: const TextStyle(
-                              color: MyColors.black,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(state.message),
+                              backgroundColor: Colors.green,
                             ),
                           );
                         } else if (state is CreateTripErrorState) {
-                          return Text(
-                            state.errorMessage,
-                            style: const TextStyle(
-                              color: Colors.red,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(state.errorMessage),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        } else if (state is PolylineForReviewState) {
+                          print("Polyline for review here : ${state.polyline}");
+                          print(
+                              "Start Location for review here : ${state.startLocation}");
+                          print(
+                              "End Location for review here : ${state.endLocation}");
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                            widget.onPolylineReady(state.polyline,
+                                state.startLocation, state.endLocation);
+                          });
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Polyline ready for review'),
+                              backgroundColor: Colors.blue,
+                            ),
+                          );
+                        } else if (state is PolylineErrorState) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(state.errorMessage),
+                              backgroundColor: Colors.red,
                             ),
                           );
                         }
-                        return const SizedBox(); // Return an empty widget if no state matches
                       },
+                      child: Container(), // Empty container to use BlocListener
                     ),
                   ],
                 ),
