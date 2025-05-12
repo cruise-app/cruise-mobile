@@ -1,18 +1,17 @@
+import 'package:cruise/features/carpooling/presentation/manager/carpool_screen_manager/carpool_screen_bloc.dart';
 import 'package:cruise/features/carpooling/presentation/views/widgets/achievements_list_widget.dart';
 import 'package:cruise/features/carpooling/presentation/views/widgets/upcoming_trips_widget.dart';
 import 'package:cruise/features/carpooling/presentation/views/widgets/welcome_message_widget.dart';
+import 'package:cruise/features/login/data/models/user_model.dart';
 import 'package:cruise/util/shared/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:cruise/features/carpooling/presentation/views/create_trip_screen.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive/hive.dart';
 
-class CarpoolingScreen extends StatefulWidget {
+class CarpoolingScreen extends StatelessWidget {
   const CarpoolingScreen({super.key});
 
-  @override
-  State<CarpoolingScreen> createState() => _CarpoolingScreenState();
-}
-
-class _CarpoolingScreenState extends State<CarpoolingScreen> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(

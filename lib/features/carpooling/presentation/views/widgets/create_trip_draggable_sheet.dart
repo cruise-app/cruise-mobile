@@ -1,4 +1,4 @@
-import 'package:cruise/features/carpooling/presentation/manager/create_trip_bloc.dart';
+import 'package:cruise/features/carpooling/presentation/manager/create_trip_manager/create_trip_bloc.dart';
 import 'package:cruise/features/carpooling/presentation/views/widgets/date_time_widget.dart';
 import 'package:cruise/features/login/data/models/user_model.dart';
 import 'package:cruise/util/shared/colors.dart';

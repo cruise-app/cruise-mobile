@@ -1,4 +1,4 @@
-import 'package:cruise/features/carpooling/presentation/manager/create_trip_bloc.dart';
+import 'package:cruise/features/carpooling/presentation/manager/create_trip_manager/create_trip_bloc.dart';
 import 'package:cruise/features/carpooling/presentation/views/widgets/create_trip_app_bar.dart';
 import 'package:cruise/features/carpooling/presentation/views/widgets/create_trip_draggable_sheet.dart';
 import 'package:cruise/features/carpooling/presentation/views/widgets/google_maps_widget.dart';

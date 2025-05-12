@@ -37,6 +37,7 @@ dependencies:
   geolocator: ^14.0.0
   board_datetime_picker: ^2.5.0
   omni_datetime_picker: ^2.1.1
+  socket_io_client: ^3.1.2
 
 dev_dependencies:
   flutter_test:

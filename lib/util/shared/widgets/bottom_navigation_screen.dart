@@ -1,8 +1,10 @@
+import 'package:cruise/features/carpooling/presentation/manager/carpool_screen_manager/carpool_screen_bloc.dart';
 import 'package:cruise/features/carpooling/presentation/views/carpooling_screen.dart';
 import 'package:cruise/features/carpooling/presentation/views/create_trip_screen.dart';
 import 'package:cruise/features/settings/settings_screen.dart';
 import 'package:cruise/util/shared/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:line_icons/line_icons.dart';
@@ -19,22 +21,25 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
   int _selectedIndex = 0;
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.w600);
-  static const List<Widget> _widgetOptions = <Widget>[
-    Text(
+  static final List<Widget> _widgetOptions = <Widget>[
+    const Text(
       'Home',
       style: optionStyle,
     ),
-    CarpoolingScreen(),
-    Text(
+    BlocProvider(
+        create: (context) => CarpoolScreenBloc(),
+        child: const CarpoolingScreen()),
+    const Text(
       'Rent',
       style: optionStyle,
     ),
-    SettingsScreen(),
+    const SettingsScreen(),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        resizeToAvoidBottomInset: false,
         backgroundColor: MyColors.black,
         body: Center(
           child: _widgetOptions.elementAt(_selectedIndex),
