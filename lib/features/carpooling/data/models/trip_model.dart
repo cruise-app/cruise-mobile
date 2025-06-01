@@ -1,6 +1,6 @@
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-class UpComingTripsResponse {
+class Trip {
   final String id;
   final String driverId;
   final String vehicleType;
@@ -16,7 +16,7 @@ class UpComingTripsResponse {
   final LatLng startLocationPoint;
   final LatLng endLocationPoint;
 
-  UpComingTripsResponse({
+  Trip({
     required this.id,
     required this.driverId,
     required this.vehicleType,
@@ -33,9 +33,9 @@ class UpComingTripsResponse {
   });
 
   // fromJson method to map the data
-  factory UpComingTripsResponse.fromJson(Map<String, dynamic> json) {
+  factory Trip.fromJson(Map<String, dynamic> json) {
     print(json);
-    return UpComingTripsResponse(
+    return Trip(
       id: json['_id'],
       driverId: json['driverId'],
       vehicleType: json['vehicleType'],

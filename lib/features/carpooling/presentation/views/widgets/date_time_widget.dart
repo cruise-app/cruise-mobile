@@ -7,9 +7,11 @@ class DateTimeWidget extends StatefulWidget {
   const DateTimeWidget({
     super.key,
     required this.onDateTimeSelected,
+    this.backgroundColor,
   });
 
   final ValueChanged<DateTime?> onDateTimeSelected;
+  final Color? backgroundColor;
 
   @override
   State<DateTimeWidget> createState() => _DateTimeWidgetState();
@@ -41,24 +43,28 @@ class _DateTimeWidgetState extends State<DateTimeWidget> {
         }
       },
       child: Container(
-        padding: const EdgeInsets.all(15),
+        height: 60,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: MyColors.black, width: 3),
+          color: widget.backgroundColor,
+          borderRadius: BorderRadius.circular(6),
+          // border: Border.all(color: MyColors.black, width: 3),
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Icon(Icons.calendar_today, color: Colors.black),
-            Text(
-              _selectedDateTime != null
-                  ? '${_selectedDateTime!.day}/${_selectedDateTime!.month}/${_selectedDateTime!.year} '
-                      '${_formatTime(_selectedDateTime!)}'
-                  : 'Select Date and Time',
-              style: const TextStyle(color: Colors.black),
-            ),
-            const Icon(Icons.arrow_forward_ios, color: Colors.black),
-          ],
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Icon(Icons.calendar_today, color: Colors.black),
+              Text(
+                _selectedDateTime != null
+                    ? '${_selectedDateTime!.day}/${_selectedDateTime!.month}/${_selectedDateTime!.year} '
+                        '${_formatTime(_selectedDateTime!)}'
+                    : 'Select Date and Time',
+                style: const TextStyle(color: Colors.black),
+              ),
+              const Icon(Icons.arrow_forward_ios, color: Colors.black),
+            ],
+          ),
         ),
       ),
     );

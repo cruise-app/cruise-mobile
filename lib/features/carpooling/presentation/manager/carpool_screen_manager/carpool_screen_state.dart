@@ -21,8 +21,7 @@ class CarpoolScreenError extends CarpoolScreenState {
 }
 
 class UpcomingTripsLoaded extends CarpoolScreenState {
-  final List<UpComingTripsResponse>
-      upcomingTrips; // Replace with your actual data model
+  final List<Trip> upcomingTrips; // Replace with your actual data model
 
   UpcomingTripsLoaded(this.upcomingTrips);
 }

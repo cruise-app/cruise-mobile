@@ -12,8 +12,8 @@ void main() async {
   Hive.init(dir.path);
 
   Hive.registerAdapter(UserModelAdapter());
-  await Hive.openBox<UserModel>('userData');
-  await Hive.openBox<String>('token');
+  // await Hive.openBox<UserModel>('userData');
+  // await Hive.openBox<String>('token');
 
   runApp(const MyApp());
 }

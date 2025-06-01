@@ -1,5 +1,5 @@
 import 'package:bloc/bloc.dart';
-import 'package:cruise/features/carpooling/data/models/up_coming_trips_response.dart';
+import 'package:cruise/features/carpooling/data/models/trip_model.dart';
 import 'package:cruise/features/carpooling/data/services/carpooling_sockets.dart';
 
 part 'carpool_screen_event.dart';
@@ -43,9 +43,13 @@ class CarpoolScreenBloc extends Bloc<CarpoolScreenEvent, CarpoolScreenState> {
     final data = event.data;
 
     if (data['success']) {
-      List<UpComingTripsResponse> trips = (data['data'] as List)
-          .map((tripData) => UpComingTripsResponse.fromJson(tripData))
+      // List<Trip> trips = (data['data'] as List)
+      //     .map((tripData) => Trip.fromJson(tripData))
+      //     .toList();
+      List<Trip> trips = (data['data'] as List)
+          .map((tripData) => Trip.fromJson(tripData))
           .toList();
+      print("Upcoming trips: $trips");
       emit(UpcomingTripsLoaded(trips));
     } else {
       emit(CarpoolScreenError(
