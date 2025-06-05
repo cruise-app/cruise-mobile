@@ -84,7 +84,7 @@ class _CarpoolingScreenState extends State<CarpoolingScreen> {
                             onPressed: () {
                               context.push(AppRouter.kCarpoolingSearchScreen,
                                   extra: {
-                                    'user': user!.userName,
+                                    'user': user!,
                                     'token': token!,
                                   });
                             },

@@ -3,6 +3,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 class Trip {
   final String id;
   final String driverId;
+  final String driverUsername; // Added for clarity, if needed
   final String vehicleType;
   final List<Passenger>
       listOfPassengers; // or another structure if you know what the passenger object looks like
@@ -19,6 +20,7 @@ class Trip {
   Trip({
     required this.id,
     required this.driverId,
+    required this.driverUsername, // Added for clarity, if needed
     required this.vehicleType,
     required this.listOfPassengers,
     required this.startLocationName,
@@ -38,6 +40,7 @@ class Trip {
     return Trip(
       id: json['_id'],
       driverId: json['driverId'],
+      driverUsername: json['driverUsername'], // Added for clarity, if needed
       vehicleType: json['vehicleType'],
       listOfPassengers: (json['listOfPassengers'] as List)
           .map((x) => Passenger.fromJson(x))

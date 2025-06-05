@@ -47,6 +47,7 @@ class SearchTripBloc extends Bloc<SearchTripEvent, SearchTripState> {
 
       // Mock data for demonstration purposes
       final result = await searchTripUsecase.getSearchTrips(SearchTripsRequest(
+        userId: event.userId,
         departureLocation: event.startLocation,
         destinationLocation: event.endLocation,
         departureDate: event.dateTime,

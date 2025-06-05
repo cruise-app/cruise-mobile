@@ -313,6 +313,7 @@ class _CreateTripDraggableSheetState extends State<CreateTripDraggableSheet> {
                       child: ActionButton(
                         message: 'Create',
                         action: () {
+                          print("Driver Username: ${widget.user!.userName}");
                           print(
                               "Start Location: ${startLocationController.text}");
                           print("End Location: ${endLocationController.text}");
@@ -325,6 +326,7 @@ class _CreateTripDraggableSheetState extends State<CreateTripDraggableSheet> {
                               selectedVehicleType != null) {
                             context.read<CreateTripBloc>().add(
                                   CreateTripSubmitted(
+                                    driverUsername: widget.user!.userName,
                                     driverID: widget.user!.id,
                                     departureTime: selectedDateTimeFromChild!
                                         .toUtc()

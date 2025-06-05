@@ -16,6 +16,7 @@ class CreateTripBloc extends Bloc<CreateTripEvent, CreateTripState> {
   CreateTripBloc() : super(CreateTripInitialState()) {
     on<CreateTripSubmitted>((event, emit) async {
       print("Now in the bloc ${event.driverID}");
+      print("Now in the bloc ${event.driverUsername}");
       print("Now in the bloc ${event.departureTime}");
       print("Now in the bloc ${event.startLocationName}");
       print("Now in the bloc ${event.endLocationName}");
@@ -23,6 +24,9 @@ class CreateTripBloc extends Bloc<CreateTripEvent, CreateTripState> {
       // handle trip creation
       if (event.driverID.isEmpty) {
         emit(CreateTripErrorState("Session expired"));
+      }
+      if (event.driverUsername.isEmpty) {
+        emit(CreateTripErrorState("Please enter driver username"));
       }
       if (event.startLocationName.isEmpty) {
         emit(CreateTripErrorState("Please select a start location"));
@@ -40,6 +44,7 @@ class CreateTripBloc extends Bloc<CreateTripEvent, CreateTripState> {
       await createTripUsecase
           .createTrip(CreateTripRequest(
         driverID: event.driverID,
+        driverUsername: event.driverUsername,
         startLocationName: event.startLocationName,
         endLocationName: event.endLocationName,
         departureTime: event.departureTime,

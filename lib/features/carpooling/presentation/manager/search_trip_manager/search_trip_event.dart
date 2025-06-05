@@ -12,12 +12,14 @@ final class SearchingLocation extends SearchTripEvent {
 final class ClearSuggestions extends SearchTripEvent {}
 
 final class GetTrips extends SearchTripEvent {
+  final String userId;
   final String startLocation;
   final String endLocation;
   final DateTime? dateTime;
   final int? maxDistance;
 
   GetTrips({
+    required this.userId,
     required this.startLocation,
     required this.endLocation,
     required this.dateTime,

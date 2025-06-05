@@ -1,10 +1,13 @@
 import 'package:cruise/features/carpooling/data/models/trip_model.dart';
 import 'package:cruise/features/carpooling/presentation/manager/search_trip_manager/search_trip_bloc.dart';
+import 'package:cruise/features/carpooling/presentation/views/widgets/carpool_trip_detail.dart';
 import 'package:cruise/features/carpooling/presentation/views/widgets/search_location_box.dart';
+import 'package:cruise/features/login/data/models/user_model.dart';
 import 'package:cruise/util/shared/colors.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 class CarpoolingSearchScreen extends StatefulWidget {
@@ -23,6 +26,23 @@ class _CarpoolingSearchScreenState extends State<CarpoolingSearchScreen> {
   List<String> suggestions = [];
   Timer? _debounce;
   DateTime? selectedDateTimeFromChild;
+  UserModel? user;
+  String? token;
+
+  @override
+  void initState() {
+    super.initState();
+    // Access the extra parameter in initState
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final extra = GoRouterState.of(context).extra as Map<String, dynamic>?;
+      if (extra != null) {
+        setState(() {
+          user = extra['user'];
+          token = extra['token'];
+        });
+      }
+    });
+  }
 
   @override
   void dispose() {
@@ -78,8 +98,10 @@ class _CarpoolingSearchScreenState extends State<CarpoolingSearchScreen> {
         onPressed: (startLocationController.text.isNotEmpty &&
                 endLocationController.text.isNotEmpty)
             ? () {
+                print("User ID: ${user?.id}");
                 context.read<SearchTripBloc>().add(
                       GetTrips(
+                        userId: user!.id,
                         startLocation: startLocationController.text,
                         endLocation: endLocationController.text,
                         dateTime: selectedDateTimeFromChild,
@@ -298,6 +320,12 @@ class _CarpoolingSearchScreenState extends State<CarpoolingSearchScreen> {
           onTap: () {
             // TODO: Navigate to a trip details screen or show a dialog
             print('Tapped on trip: ${trip.id}');
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => CarpoolTripDetail(trip: trip),
+              ),
+            );
           },
           borderRadius: BorderRadius.circular(12),
           child: Padding(
@@ -411,7 +439,6 @@ class _CarpoolingSearchScreenState extends State<CarpoolingSearchScreen> {
                   child: ElevatedButton(
                     onPressed: () {
                       // TODO: Implement join trip functionality
-                      print('Join trip: ${trip.id}');
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: MyColors.lightYellow,

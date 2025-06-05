@@ -61,6 +61,14 @@ class _UpcomingTripsWidgetState extends State<UpcomingTripsWidget> {
                   ),
                 );
               } else if (state is UpcomingTripsLoaded) {
+                if (state.upcomingTrips.isEmpty) {
+                  return const Center(
+                    child: Text(
+                      "No upcoming trips found.",
+                      style: TextStyle(color: Colors.grey, fontSize: 16),
+                    ),
+                  );
+                }
                 // Handle the success state and display the trips
                 return ListView.builder(
                   itemCount: state.upcomingTrips.length,

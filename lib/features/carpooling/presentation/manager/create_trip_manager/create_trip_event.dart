@@ -6,6 +6,7 @@ sealed class CreateTripEvent {}
 
 final class CreateTripSubmitted extends CreateTripEvent {
   final String driverID;
+  final String driverUsername;
   final String departureTime;
   final String startLocationName;
   final String endLocationName;
@@ -13,6 +14,7 @@ final class CreateTripSubmitted extends CreateTripEvent {
 
   CreateTripSubmitted({
     required this.driverID,
+    required this.driverUsername,
     required this.departureTime,
     required this.startLocationName,
     required this.endLocationName,
