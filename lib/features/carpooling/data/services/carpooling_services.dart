@@ -70,9 +70,17 @@ class CarpoolingService {
       Map<String, dynamic> requestData) async {
     try {
       final response = await _apiService.get(
-          endPoint: '${_preUrl}search-trips', data: requestData);
+        endPoint: '${_preUrl}search-trips',
+        data: requestData,
+      );
 
       if (response.statusCode == 200) {
+        if (response.data['data']?.isNotEmpty == true) {
+          print(
+              "Closest pickup point: ${response.data['data'][0]['closestPickupPoint']}");
+          print(
+              "Closest dropoff point: ${response.data['data'][0]['closestDropoffPoint']}");
+        }
         return Right(SearchTripResponse.fromJson(response.data));
       } else {
         return Left(Failure(message: response.data['message']));

@@ -21,5 +21,8 @@ final class SearchTripFailure extends SearchTripState {
 
 final class GetTripsSuccess extends SearchTripState {
   final List<Trip> trips;
-  GetTripsSuccess({required this.trips});
+
+  GetTripsSuccess({
+    required this.trips,
+  });
 }

@@ -270,6 +270,8 @@ class _CarpoolingSearchScreenState extends State<CarpoolingSearchScreen> {
                         ),
                       );
                     } else if (state is GetTripsSuccess) {
+                      print('Trips fetched: ${state.trips.length}');
+
                       if (state.trips.isEmpty) {
                         return const Center(
                           child: Text(
@@ -285,7 +287,11 @@ class _CarpoolingSearchScreenState extends State<CarpoolingSearchScreen> {
                         itemCount: state.trips.length,
                         itemBuilder: (context, index) {
                           final trip = state.trips[index];
-                          return _buildTripCard(context, trip, theme);
+                          return _buildTripCard(
+                            context,
+                            trip,
+                            theme,
+                          );
                         },
                       );
                     }
@@ -300,7 +306,11 @@ class _CarpoolingSearchScreenState extends State<CarpoolingSearchScreen> {
     );
   }
 
-  Widget _buildTripCard(BuildContext context, Trip trip, ThemeData theme) {
+  Widget _buildTripCard(
+    BuildContext context,
+    Trip trip,
+    ThemeData theme,
+  ) {
     return Card(
       elevation: 4,
       margin: const EdgeInsets.symmetric(vertical: 8.0),

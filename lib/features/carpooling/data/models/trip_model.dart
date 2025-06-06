@@ -3,10 +3,9 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 class Trip {
   final String id;
   final String driverId;
-  final String driverUsername; // Added for clarity, if needed
+  final String driverUsername;
   final String vehicleType;
-  final List<Passenger>
-      listOfPassengers; // or another structure if you know what the passenger object looks like
+  final List<Passenger> listOfPassengers;
   final String startLocationName;
   final String endLocationName;
   final DateTime departureTime;
@@ -16,11 +15,15 @@ class Trip {
   final String polyline;
   final LatLng startLocationPoint;
   final LatLng endLocationPoint;
+  final LatLng? closestPickupPoint; // Added
+  final LatLng? closestDropoffPoint; // Added
+  final String? pickupPolyline; // Added
+  final String? dropoffPolyline; // Added
 
   Trip({
     required this.id,
     required this.driverId,
-    required this.driverUsername, // Added for clarity, if needed
+    required this.driverUsername,
     required this.vehicleType,
     required this.listOfPassengers,
     required this.startLocationName,
@@ -32,34 +35,57 @@ class Trip {
     required this.polyline,
     required this.startLocationPoint,
     required this.endLocationPoint,
+    required this.closestPickupPoint,
+    required this.closestDropoffPoint,
+    required this.pickupPolyline,
+    required this.dropoffPolyline, // Added for dropoff route
   });
 
-  // fromJson method to map the data
   factory Trip.fromJson(Map<String, dynamic> json) {
-    print(json);
+    print('Parsing trip JSON: $json');
     return Trip(
-      id: json['_id'],
-      driverId: json['driverId'],
-      driverUsername: json['driverUsername'], // Added for clarity, if needed
-      vehicleType: json['vehicleType'],
-      listOfPassengers: (json['listOfPassengers'] as List)
+      id: json['_id'] ?? '',
+      driverId: json['driverId'] ?? '',
+      driverUsername: json['driverUsername'] ?? '',
+      vehicleType: json['vehicleType'] ?? '',
+      listOfPassengers: (json['listOfPassengers'] as List? ?? [])
           .map((x) => Passenger.fromJson(x))
           .toList(),
-      startLocationName: json['startLocationName'],
-      endLocationName: json['endLocationName'],
-      departureTime: DateTime.parse(json['departureTime']),
-      estimatedTripTime: json['estimatedTripTime'],
-      estimatedTripDistance: json['estimatedTripDistance'],
-      seatsAvailable: json['seatsAvailable'],
-      polyline: json['polyline'],
+      startLocationName: json['startLocationName'] ?? '',
+      endLocationName: json['endLocationName'] ?? '',
+      departureTime: json['departureTime'] != null
+          ? DateTime.parse(json['departureTime'])
+          : DateTime.now(), // Default to now if null
+      estimatedTripTime: json['estimatedTripTime'] ?? '',
+      estimatedTripDistance: json['estimatedTripDistance'] ?? '',
+      seatsAvailable: json['seatsAvailable'] ?? 0,
+      polyline: json['polyline'] ?? '',
       startLocationPoint: LatLng(
-        json['startLocationPoint']['coordinates'][1],
-        json['startLocationPoint']['coordinates'][0],
+        (json['startLocationPoint']?['coordinates']?[1] as num?)?.toDouble() ??
+            0.0,
+        (json['startLocationPoint']?['coordinates']?[0] as num?)?.toDouble() ??
+            0.0,
       ),
       endLocationPoint: LatLng(
-        json['endLocationPoint']['coordinates'][1],
-        json['endLocationPoint']['coordinates'][0],
+        (json['endLocationPoint']?['coordinates']?[1] as num?)?.toDouble() ??
+            0.0,
+        (json['endLocationPoint']?['coordinates']?[0] as num?)?.toDouble() ??
+            0.0,
       ),
+      closestPickupPoint: json['closestPickupPoint'] != null
+          ? LatLng(
+              json['closestPickupPoint']['latitude'] as double,
+              json['closestPickupPoint']['longitude'] as double,
+            )
+          : null,
+      closestDropoffPoint: json['closestDropoffPoint'] != null
+          ? LatLng(
+              json['closestDropoffPoint']['latitude'] as double,
+              json['closestDropoffPoint']['longitude'] as double,
+            )
+          : null,
+      pickupPolyline: json['pickupPolyline'],
+      dropoffPolyline: json['dropoffPolyline'], // Added for dropoff route
     );
   }
 }
@@ -85,18 +111,18 @@ class Passenger {
 
   factory Passenger.fromJson(Map<String, dynamic> json) {
     return Passenger(
-      id: json['_id'],
-      username: json['username'],
-      status: json['status'],
-      pickUpLocationName: json['pickupLocationName'], // fixed key
+      id: json['_id'] ?? '',
+      username: json['username'] ?? '',
+      status: json['status'] ?? '',
+      pickUpLocationName: json['pickupLocationName'] ?? '',
       pickUpLocationPoint: LatLng(
-        json['pickupPoint']['coordinates'][1], // fixed key
-        json['pickupPoint']['coordinates'][0],
+        (json['pickupPoint']?['coordinates']?[1] as num?)?.toDouble() ?? 0.0,
+        (json['pickupPoint']?['coordinates']?[0] as num?)?.toDouble() ?? 0.0,
       ),
-      dropOffLocationName: json['dropoffLocationName'], // fixed key
+      dropOffLocationName: json['dropoffLocationName'] ?? '',
       dropOffLocationPoint: LatLng(
-        json['dropoffPoint']['coordinates'][1], // fixed key
-        json['dropoffPoint']['coordinates'][0],
+        (json['dropoffPoint']?['coordinates']?[1] as num?)?.toDouble() ?? 0.0,
+        (json['dropoffPoint']?['coordinates']?[0] as num?)?.toDouble() ?? 0.0,
       ),
     );
   }

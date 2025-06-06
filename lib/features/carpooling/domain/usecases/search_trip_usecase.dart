@@ -1,3 +1,4 @@
+import 'package:cruise/features/carpooling/data/models/search_trip_response.dart';
 import 'package:cruise/features/carpooling/data/models/search_trips_request.dart';
 import 'package:cruise/features/carpooling/data/models/trip_model.dart';
 import 'package:cruise/features/carpooling/data/services/carpooling_services.dart';
@@ -9,12 +10,12 @@ class SearchTripUsecase {
 
   SearchTripUsecase() : _createTripService = CarpoolingService();
 
-  Future<Either<Failure, List<Trip>>> getSearchTrips(
+  Future<Either<Failure, SearchTripResponse>> getSearchTrips(
       SearchTripsRequest query) async {
     final response = await _createTripService.searchTrips(query.toJson());
     return response.fold(
       (failure) => Left(failure),
-      (data) => Right(data.trips),
+      (data) => Right(data),
     );
   }
 }

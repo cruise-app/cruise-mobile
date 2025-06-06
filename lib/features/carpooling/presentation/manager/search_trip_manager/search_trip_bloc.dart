@@ -3,6 +3,7 @@ import 'package:cruise/features/carpooling/data/models/trip_model.dart';
 import 'package:cruise/features/carpooling/domain/usecases/place_suggestion_usecase.dart';
 import 'package:cruise/features/carpooling/domain/usecases/search_trip_usecase.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 part 'search_trip_event.dart';
 part 'search_trip_state.dart';
@@ -59,9 +60,14 @@ class SearchTripBloc extends Bloc<SearchTripEvent, SearchTripState> {
           SearchTripFailure(message: failure.message),
         );
       },
-          (trips) => emit(
-                GetTripsSuccess(trips: trips),
-              ));
+          (trips) => {
+                print("The polyline is ${trips.trips[0].dropoffPolyline}"),
+                emit(
+                  GetTripsSuccess(
+                    trips: trips.trips,
+                  ),
+                ),
+              });
     });
   }
 }
