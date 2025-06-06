@@ -61,7 +61,6 @@ class SearchTripBloc extends Bloc<SearchTripEvent, SearchTripState> {
         );
       },
           (trips) => {
-                print("The polyline is ${trips.trips[0].dropoffPolyline}"),
                 emit(
                   GetTripsSuccess(
                     trips: trips.trips,

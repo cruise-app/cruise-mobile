@@ -26,6 +26,11 @@ class SettingsScreen extends StatelessWidget {
           },
           child: const Text('Logout'),
         ),
+        ElevatedButton(
+            onPressed: () {
+              GoRouter.of(context).push(AppRouter.kChatBotScreen);
+            },
+            child: const Text('Chat bot')),
       ],
     );
   }

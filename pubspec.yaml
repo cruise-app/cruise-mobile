@@ -39,6 +39,8 @@ dependencies:
   omni_datetime_picker: ^2.1.1
   socket_io_client: ^3.1.2
   flutter_polyline_points: ^2.1.0
+  shared_preferences: ^2.5.3
+  get_it: ^8.0.3
 
 dev_dependencies:
   flutter_test:
@@ -52,3 +54,4 @@ flutter:
 
   assets:
     - assets/svgs/
+    - assets/images/

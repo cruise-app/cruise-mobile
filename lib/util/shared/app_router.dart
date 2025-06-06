@@ -1,5 +1,6 @@
 import 'package:cruise/features/carpooling/presentation/manager/search_trip_manager/search_trip_bloc.dart';
 import 'package:cruise/features/carpooling/presentation/views/carpooling_search_screen.dart';
+import 'package:cruise/features/chatbot/presentation/views/chatbot_screen.dart';
 import 'package:cruise/features/forget_password/presentation/views/forget_password_flow.dart';
 import 'package:cruise/features/forget_password/presentation/manager/forget_password_bloc.dart';
 import 'package:cruise/features/lobby/lobby_screen.dart';
@@ -23,6 +24,7 @@ abstract class AppRouter {
   static const kBottomNavigationScreen = '/BottomNavigationScreen';
   static const kSplashScreen = '/';
   static const kCarpoolingSearchScreen = '/CarpoolingSearchScreen';
+  static const kChatBotScreen = '/ChatBotScreen';
 
   static final GoRouter router = GoRouter(
     routes: [
@@ -64,6 +66,10 @@ abstract class AppRouter {
             create: (context) => SearchTripBloc(),
             child: const CarpoolingSearchScreen()),
       ),
+      GoRoute(
+        path: kChatBotScreen,
+        builder: (context, state) => const ChatbotScreen(),
+      )
     ],
   );
 }
