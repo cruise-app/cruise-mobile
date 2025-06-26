@@ -1,0 +1,2 @@
+D:/Term 7/Cruise_Project/CRUISE/android/app/.cxx/Debug/3n2p6a4p/armeabi-v7a/CMakeFiles/edit_cache.dir
+D:/Term 7/Cruise_Project/CRUISE/android/app/.cxx/Debug/3n2p6a4p/armeabi-v7a/CMakeFiles/rebuild_cache.dir

@@ -89,4 +89,33 @@ class CarpoolingService {
       return Left(Failure(message: "Unexpected error: ${e.toString()}"));
     }
   }
+
+  Future<Either<Failure, Map<String, dynamic>>> joinTrip({
+    required String tripId,
+    required String passengerId,
+    required String username,
+    required String passengerPickup,
+    required String passengerDropoff,
+  }) async {
+    try {
+      final response = await _apiService.post(
+        endPoint: '${_preUrl}join-trip',
+        data: {
+          'tripId': tripId,
+          'passengerId': passengerId,
+          'username': username,
+          'passengerPickup': passengerPickup,
+          'passengerDropoff': passengerDropoff,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return Right(response.data);
+      } else {
+        return Left(Failure(message: response.data['message']));
+      }
+    } catch (e) {
+      return Left(Failure(message: "Failed to join trip: ${e.toString()}"));
+    }
+  }
 }

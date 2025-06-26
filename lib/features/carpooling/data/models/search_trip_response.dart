@@ -20,6 +20,8 @@ class SearchTripResponse {
           ...(item['trip'] as Map<String, dynamic>),
           'closestPickupPoint': item['closestPickupPoint'],
           'closestDropoffPoint': item['closestDropoffPoint'],
+          'passengerStartPoint': item['passengerStartPoint'],
+          'passengerEndPoint': item['passengerEndPoint'],
           'pickupPolyline': item['pickupPolyline'],
           'dropoffPolyline': item['dropoffPolyline'],
         };

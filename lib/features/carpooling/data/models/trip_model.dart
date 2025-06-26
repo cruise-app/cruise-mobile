@@ -17,6 +17,8 @@ class Trip {
   final LatLng endLocationPoint;
   final LatLng? closestPickupPoint; // Added
   final LatLng? closestDropoffPoint; // Added
+  final LatLng? passengerStartPoint;
+  final LatLng? passengerEndPoint;
   final String? pickupPolyline; // Added
   final String? dropoffPolyline; // Added
 
@@ -37,6 +39,8 @@ class Trip {
     required this.endLocationPoint,
     required this.closestPickupPoint,
     required this.closestDropoffPoint,
+    required this.passengerStartPoint,
+    required this.passengerEndPoint,
     required this.pickupPolyline,
     required this.dropoffPolyline, // Added for dropoff route
   });
@@ -70,6 +74,18 @@ class Trip {
         (json['endLocationPoint']?['coordinates']?[1] as num?)?.toDouble() ??
             0.0,
         (json['endLocationPoint']?['coordinates']?[0] as num?)?.toDouble() ??
+            0.0,
+      ),
+      passengerStartPoint: LatLng(
+        (json['passengerStartPoint']?['coordinates']?[1] as num?)?.toDouble() ??
+            0.0,
+        (json['passengerStartPoint']?['coordinates']?[0] as num?)?.toDouble() ??
+            0.0,
+      ),
+      passengerEndPoint: LatLng(
+        (json['passengerEndPoint']?['coordinates']?[1] as num?)?.toDouble() ??
+            0.0,
+        (json['passengerEndPoint']?['coordinates']?[0] as num?)?.toDouble() ??
             0.0,
       ),
       closestPickupPoint: json['closestPickupPoint'] != null

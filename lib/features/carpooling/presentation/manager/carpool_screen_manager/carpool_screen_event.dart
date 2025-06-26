@@ -16,3 +16,15 @@ class UpcomingTripsReceived extends CarpoolScreenEvent {
   final dynamic data;
   UpcomingTripsReceived({required this.data});
 }
+
+class DeleteUpcomingTrip extends CarpoolScreenEvent {
+  final String tripId;
+  final String userId;
+  DeleteUpcomingTrip({required this.tripId, required this.userId});
+}
+
+class LeaveUpcomingTrip extends CarpoolScreenEvent {
+  final String tripId;
+  final String userId;
+  LeaveUpcomingTrip({required this.tripId, required this.userId});
+}

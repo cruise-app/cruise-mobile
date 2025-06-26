@@ -52,7 +52,7 @@ class SearchTripBloc extends Bloc<SearchTripEvent, SearchTripState> {
         departureLocation: event.startLocation,
         destinationLocation: event.endLocation,
         departureDate: event.dateTime,
-        maxDistance: 100,
+        maxDistance: 1500,
       ));
 
       result.fold((failure) {

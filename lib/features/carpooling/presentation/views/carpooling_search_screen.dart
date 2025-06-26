@@ -9,6 +9,7 @@ import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:cruise/features/carpooling/presentation/manager/join_trip_manager/join_trip_bloc.dart';
 
 class CarpoolingSearchScreen extends StatefulWidget {
   const CarpoolingSearchScreen({super.key});
@@ -28,10 +29,12 @@ class _CarpoolingSearchScreenState extends State<CarpoolingSearchScreen> {
   DateTime? selectedDateTimeFromChild;
   UserModel? user;
   String? token;
+  late JoinTripBloc _joinTripBloc;
 
   @override
   void initState() {
     super.initState();
+    _joinTripBloc = JoinTripBloc();
     // Access the extra parameter in initState
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final extra = GoRouterState.of(context).extra as Map<String, dynamic>?;
@@ -51,6 +54,7 @@ class _CarpoolingSearchScreenState extends State<CarpoolingSearchScreen> {
     startLocationFocusNode.dispose();
     endLocationFocusNode.dispose();
     _debounce?.cancel();
+    _joinTripBloc.close();
     super.dispose();
   }
 
@@ -328,7 +332,6 @@ class _CarpoolingSearchScreenState extends State<CarpoolingSearchScreen> {
         ),
         child: InkWell(
           onTap: () {
-            // TODO: Navigate to a trip details screen or show a dialog
             print('Tapped on trip: ${trip.id}');
             Navigator.push(
               context,
@@ -446,18 +449,75 @@ class _CarpoolingSearchScreenState extends State<CarpoolingSearchScreen> {
                 // Action Button
                 Align(
                   alignment: Alignment.centerRight,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      // TODO: Implement join trip functionality
+                  child: BlocConsumer<JoinTripBloc, JoinTripState>(
+                    bloc: _joinTripBloc,
+                    listener: (context, state) {
+                      if (state is JoinTripSuccess) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                                'Successfully joined ${trip.driverUsername}\'s trip!'),
+                            backgroundColor: Colors.green,
+                          ),
+                        );
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CarpoolTripDetail(
+                              trip: trip,
+                              joinedTrip: true,
+                            ),
+                          ),
+                        );
+                      } else if (state is JoinTripFailure) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(state.message),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      }
                     },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: MyColors.lightYellow,
-                      foregroundColor: MyColors.black,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    child: const Text('Join Trip'),
+                    builder: (context, state) {
+                      if (state is JoinTripLoading) {
+                        return const SizedBox(
+                          height: 36,
+                          width: 36,
+                          child: CircularProgressIndicator(
+                            color: MyColors.lightYellow,
+                          ),
+                        );
+                      }
+
+                      return ElevatedButton(
+                        onPressed: () {
+                          print('Joining trip: ${trip.id}');
+                          print('User ID: ${user!.id}');
+                          print('User Name: ${user!.userName}');
+                          print('Trip ID: ${trip.id}');
+                          print(
+                              'Trip Start Location: ${trip.startLocationName}');
+                          print('Trip End Location: ${trip.endLocationName}');
+                          _joinTripBloc.add(
+                            JoinTripRequested(
+                              tripId: trip.id,
+                              passengerId: user!.id,
+                              username: user!.userName,
+                              passengerPickup: trip.startLocationName,
+                              passengerDropoff: trip.endLocationName,
+                            ),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: MyColors.lightYellow,
+                          foregroundColor: MyColors.black,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: const Text('Join Trip'),
+                      );
+                    },
                   ),
                 ),
               ],

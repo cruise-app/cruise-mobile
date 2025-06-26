@@ -1,28 +1,42 @@
 import 'package:cruise/features/carpooling/data/models/trip_model.dart';
+import 'package:cruise/features/carpooling/presentation/manager/join_trip_manager/join_trip_bloc.dart';
 import 'package:cruise/util/shared/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:intl/intl.dart';
+import 'package:hive/hive.dart';
 
 class CarpoolTripDetail extends StatefulWidget {
-  const CarpoolTripDetail({super.key, required this.trip});
+  const CarpoolTripDetail(
+      {super.key, required this.trip, this.joinedTrip = false});
   final Trip trip;
+  final bool joinedTrip;
 
   @override
   State<CarpoolTripDetail> createState() => _CarpoolTripDetailState();
 }
 
 class _CarpoolTripDetailState extends State<CarpoolTripDetail> {
+  late JoinTripBloc _joinTripBloc;
+  late var box;
+  late dynamic user;
   GoogleMapController? _mapController;
   List<LatLng> _polylineCoordinates = [];
+  List<LatLng> _pickupPolylineCoordinates = [];
+  List<LatLng> _dropoffPolylineCoordinates = [];
   Set<Polyline> _polylines = {};
   Set<Marker> _markers = {};
 
   @override
   void initState() {
     super.initState();
+    _joinTripBloc = JoinTripBloc();
+    box = Hive.box('userBox');
+    user = box.get('userModel');
     _decodePolyline();
+    _decodePickupAndDropoffPolylines();
     _setMarkers();
   }
 
@@ -52,13 +66,69 @@ class _CarpoolTripDetailState extends State<CarpoolTripDetail> {
     }
   }
 
+  void _decodePickupAndDropoffPolylines() {
+    try {
+      PolylinePoints polylinePoints = PolylinePoints();
+
+      // Decode pickup polyline if available
+      if (widget.trip.pickupPolyline != null &&
+          widget.trip.pickupPolyline!.isNotEmpty) {
+        final pickupResult =
+            polylinePoints.decodePolyline(widget.trip.pickupPolyline!);
+        if (pickupResult.isNotEmpty) {
+          setState(() {
+            _pickupPolylineCoordinates = pickupResult
+                .map((point) => LatLng(point.latitude, point.longitude))
+                .toList();
+            _polylines.add(
+              Polyline(
+                polylineId: PolylineId('pickup_${widget.trip.id}'),
+                points: _pickupPolylineCoordinates,
+                color: Colors.green,
+                width: 5,
+                patterns: [PatternItem.dash(20), PatternItem.gap(10)],
+              ),
+            );
+          });
+        }
+      }
+
+      // Decode dropoff polyline if available
+      if (widget.trip.dropoffPolyline != null &&
+          widget.trip.dropoffPolyline!.isNotEmpty) {
+        final dropoffResult =
+            polylinePoints.decodePolyline(widget.trip.dropoffPolyline!);
+        if (dropoffResult.isNotEmpty) {
+          setState(() {
+            _dropoffPolylineCoordinates = dropoffResult
+                .map((point) => LatLng(point.latitude, point.longitude))
+                .toList();
+            _polylines.add(
+              Polyline(
+                polylineId: PolylineId('dropoff_${widget.trip.id}'),
+                points: _dropoffPolylineCoordinates,
+                color: Colors.orange,
+                width: 5,
+                patterns: [PatternItem.dash(20), PatternItem.gap(10)],
+              ),
+            );
+          });
+        }
+      }
+    } catch (e) {
+      print('Error decoding pickup/dropoff polylines: $e');
+    }
+  }
+
   void _setMarkers() {
     setState(() {
+      // Main route markers
       _markers.add(
         Marker(
           markerId: MarkerId('start_${widget.trip.id}'),
           position: widget.trip.startLocationPoint,
-          infoWindow: InfoWindow(title: widget.trip.startLocationName),
+          infoWindow:
+              InfoWindow(title: 'Trip Start: ${widget.trip.startLocationName}'),
           icon:
               BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
         ),
@@ -67,10 +137,37 @@ class _CarpoolTripDetailState extends State<CarpoolTripDetail> {
         Marker(
           markerId: MarkerId('end_${widget.trip.id}'),
           position: widget.trip.endLocationPoint,
-          infoWindow: InfoWindow(title: widget.trip.endLocationName),
+          infoWindow:
+              InfoWindow(title: 'Trip End: ${widget.trip.endLocationName}'),
           icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
         ),
       );
+
+      // Add pickup point marker if available
+      if (widget.trip.closestPickupPoint != null) {
+        _markers.add(
+          Marker(
+            markerId: MarkerId('pickup_${widget.trip.id}'),
+            position: widget.trip.closestPickupPoint!,
+            infoWindow: const InfoWindow(title: 'Your Pickup Point'),
+            icon: BitmapDescriptor.defaultMarkerWithHue(
+                BitmapDescriptor.hueYellow),
+          ),
+        );
+      }
+
+      // Add dropoff point marker if available
+      if (widget.trip.closestDropoffPoint != null) {
+        _markers.add(
+          Marker(
+            markerId: MarkerId('dropoff_${widget.trip.id}'),
+            position: widget.trip.closestDropoffPoint!,
+            infoWindow: const InfoWindow(title: 'Your Dropoff Point'),
+            icon: BitmapDescriptor.defaultMarkerWithHue(
+                BitmapDescriptor.hueViolet),
+          ),
+        );
+      }
     });
   }
 
@@ -92,42 +189,39 @@ class _CarpoolTripDetailState extends State<CarpoolTripDetail> {
   }
 
   LatLngBounds _calculateBounds() {
-    double minLat = _polylineCoordinates[0].latitude;
-    double maxLat = _polylineCoordinates[0].latitude;
-    double minLng = _polylineCoordinates[0].longitude;
-    double maxLng = _polylineCoordinates[0].longitude;
+    List<LatLng> allPoints = [
+      ..._polylineCoordinates,
+      ..._pickupPolylineCoordinates,
+      ..._dropoffPolylineCoordinates,
+      widget.trip.startLocationPoint,
+      widget.trip.endLocationPoint,
+    ];
 
-    for (var point in _polylineCoordinates) {
+    if (widget.trip.closestPickupPoint != null) {
+      allPoints.add(widget.trip.closestPickupPoint!);
+    }
+    if (widget.trip.closestDropoffPoint != null) {
+      allPoints.add(widget.trip.closestDropoffPoint!);
+    }
+
+    if (allPoints.isEmpty) {
+      // Fallback to start location if no points available
+      return LatLngBounds(
+        southwest: widget.trip.startLocationPoint,
+        northeast: widget.trip.startLocationPoint,
+      );
+    }
+
+    double minLat = allPoints[0].latitude;
+    double maxLat = allPoints[0].latitude;
+    double minLng = allPoints[0].longitude;
+    double maxLng = allPoints[0].longitude;
+
+    for (var point in allPoints) {
       if (point.latitude < minLat) minLat = point.latitude;
       if (point.latitude > maxLat) maxLat = point.latitude;
       if (point.longitude < minLng) minLng = point.longitude;
       if (point.longitude > maxLng) maxLng = point.longitude;
-    }
-
-    // Include start and end points in bounds
-    if (widget.trip.startLocationPoint.latitude < minLat) {
-      minLat = widget.trip.startLocationPoint.latitude;
-    }
-    if (widget.trip.startLocationPoint.latitude > maxLat) {
-      maxLat = widget.trip.startLocationPoint.latitude;
-    }
-    if (widget.trip.startLocationPoint.longitude < minLng) {
-      minLng = widget.trip.startLocationPoint.longitude;
-    }
-    if (widget.trip.startLocationPoint.longitude > maxLng) {
-      maxLng = widget.trip.startLocationPoint.longitude;
-    }
-    if (widget.trip.endLocationPoint.latitude < minLat) {
-      minLat = widget.trip.endLocationPoint.latitude;
-    }
-    if (widget.trip.endLocationPoint.latitude > maxLat) {
-      maxLat = widget.trip.endLocationPoint.latitude;
-    }
-    if (widget.trip.endLocationPoint.longitude < minLng) {
-      minLng = widget.trip.endLocationPoint.longitude;
-    }
-    if (widget.trip.endLocationPoint.longitude > maxLng) {
-      maxLng = widget.trip.endLocationPoint.longitude;
     }
 
     return LatLngBounds(
@@ -139,7 +233,80 @@ class _CarpoolTripDetailState extends State<CarpoolTripDetail> {
   @override
   void dispose() {
     _mapController?.dispose();
+    _joinTripBloc.close();
     super.dispose();
+  }
+
+  Widget _buildJoinButton(BuildContext context, ThemeData theme) {
+    return BlocConsumer<JoinTripBloc, JoinTripState>(
+      bloc: _joinTripBloc,
+      listener: (context, state) {
+        if (state is JoinTripSuccess) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                  'Successfully joined ${widget.trip.driverUsername}\'s trip!'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        } else if (state is JoinTripFailure) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      },
+      builder: (context, state) {
+        if (state is JoinTripLoading) {
+          return const Center(
+            child: CircularProgressIndicator(
+              color: MyColors.lightYellow,
+            ),
+          );
+        }
+
+        return GestureDetector(
+          onTap: () {
+            print('Joining trip: ${widget.trip.id}');
+            print('User ID: ${user.id}');
+            print('User Name: ${user.userName}');
+            print('Trip ID: ${widget.trip.id}');
+            print('Trip Start Location: ${widget.trip.startLocationName}');
+            print('Trip End Location: ${widget.trip.endLocationName}');
+            _joinTripBloc.add(
+              JoinTripRequested(
+                tripId: widget.trip.id,
+                passengerId: user!.id,
+                username: user!.userName,
+                passengerPickup: widget.trip.startLocationName,
+                passengerDropoff: widget.trip.endLocationName,
+              ),
+            );
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+              vertical: 12,
+              horizontal: 16,
+            ),
+            decoration: BoxDecoration(
+              color: MyColors.lightYellow,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Center(
+              child: Text(
+                'Join Trip',
+                style: theme.textTheme.bodyLarge?.copyWith(
+                  color: MyColors.black,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -278,39 +445,13 @@ class _CarpoolTripDetailState extends State<CarpoolTripDetail> {
                                   theme: theme,
                                 ),
                               const SizedBox(height: 16),
-                              GestureDetector(
-                                onTap: () {
-                                  // Handle contact driver action
-                                  // This could be a call, message, etc.
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                        "Joining ${widget.trip.driverUsername}'s Trip...",
-                                      ),
-                                    ),
-                                  );
-                                },
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 12,
-                                    horizontal: 16,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: MyColors.lightYellow,
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      'Join Trip',
-                                      style:
-                                          theme.textTheme.bodyLarge?.copyWith(
-                                        color: MyColors.black,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              )
+                              !widget.joinedTrip
+                                  ? Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 16.0),
+                                      child: _buildJoinButton(context, theme),
+                                    )
+                                  : const SizedBox.shrink(),
                             ],
                           ),
                         ),

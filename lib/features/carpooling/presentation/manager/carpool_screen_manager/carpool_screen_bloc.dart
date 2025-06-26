@@ -12,6 +12,29 @@ class CarpoolScreenBloc extends Bloc<CarpoolScreenEvent, CarpoolScreenState> {
   CarpoolScreenBloc() : super(CarpoolScreenInitial()) {
     on<FetchUpcomingTrips>(_fetchUpComingTrips);
     on<UpcomingTripsReceived>(_onUpcomingTripsReceived);
+    on<DeleteUpcomingTrip>(_onDeleteUpcomingTrip);
+    on<LeaveUpcomingTrip>(_onLeaveUpcomingTrip);
+  }
+
+  Future<void> _onLeaveUpcomingTrip(
+      LeaveUpcomingTrip event, Emitter<CarpoolScreenState> emit) async {
+    emit(CarpoolScreenLoading());
+
+    socketService.connect();
+
+    socketService.emitEvent('leaveUpcomingTrip', [event.userId, event.tripId]);
+  }
+
+  Future<void> _onDeleteUpcomingTrip(
+      DeleteUpcomingTrip event, Emitter<CarpoolScreenState> emit) async {
+    emit(CarpoolScreenLoading());
+
+    // Connect if not already connected
+    socketService.connect();
+
+    // Emit the delete event to the backend
+    socketService.emitEvent('deleteUpComingTrip', [event.userId, event.tripId]);
+    // The backend will respond with "upComingTrips", which is already handled by your listener
   }
 
   Future<void> _fetchUpComingTrips(

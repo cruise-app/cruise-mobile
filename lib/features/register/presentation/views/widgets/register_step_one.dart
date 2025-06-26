@@ -45,91 +45,95 @@ class RegisterStepOne extends StatelessWidget {
         padding: EdgeInsets.symmetric(
             horizontal: context.responsive.pageLayoutHorizontalPadding,
             vertical: 18),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const CustomAppBar(children: [GoBackButton()]),
-            const SizedBox(height: 20),
-            Text('Set up your profile',
-                style: GoogleFonts.poppins(
-                    fontSize: 28, fontWeight: FontWeight.w600)),
-            const SizedBox(height: 30),
-            CustomTextField(
-                hint: 'First Name', controller: firstNameController),
-            const SizedBox(height: 20),
-            CustomTextField(hint: 'Last Name', controller: lastNameController),
-            const SizedBox(height: 20),
-            CustomTextField(hint: 'User Name', controller: userNameController),
-            const SizedBox(height: 20),
-            SizedBox(
-              width: double.infinity,
-              child: _buildDropdown(
-                hint: 'Gender',
-                items: ['Male', 'Female'],
-                value: selectedGender,
-                onChanged: onGenderChanged,
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const CustomAppBar(children: [GoBackButton()]),
+              const SizedBox(height: 20),
+              Text('Set up your profile',
+                  style: GoogleFonts.poppins(
+                      fontSize: 28, fontWeight: FontWeight.w600)),
+              const SizedBox(height: 30),
+              CustomTextField(
+                  hint: 'First Name', controller: firstNameController),
+              const SizedBox(height: 20),
+              CustomTextField(
+                  hint: 'Last Name', controller: lastNameController),
+              const SizedBox(height: 20),
+              CustomTextField(
+                  hint: 'User Name', controller: userNameController),
+              const SizedBox(height: 20),
+              SizedBox(
+                width: double.infinity,
+                child: _buildDropdown(
+                  hint: 'Gender',
+                  items: ['Male', 'Female'],
+                  value: selectedGender,
+                  onChanged: onGenderChanged,
+                ),
               ),
-            ),
-            const SizedBox(height: 15),
-            Row(
-              children: [
-                Expanded(
+              const SizedBox(height: 15),
+              Row(
+                children: [
+                  Expanded(
+                      child: _buildDropdown(
+                    hint: 'MM',
+                    items: List.generate(12, (i) => (i + 1).toString()),
+                    value: selectedMonth,
+                    onChanged: onSelectedMonthChanged,
+                  )),
+                  const SizedBox(width: 10),
+                  Expanded(
                     child: _buildDropdown(
-                  hint: 'MM',
-                  items: List.generate(12, (i) => (i + 1).toString()),
-                  value: selectedMonth,
-                  onChanged: onSelectedMonthChanged,
-                )),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: _buildDropdown(
-                    hint: 'DD',
-                    items: List.generate(31, (i) => (i + 1).toString()),
-                    value: selectedDay,
-                    onChanged: onSelectedDayChanged,
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: _buildDropdown(
-                      hint: 'YYYY',
-                      items: List.generate(
-                          100, (i) => (DateTime.now().year - i).toString()),
-                      value: selectedYear,
-                      onChanged: onSelectedYearChanged),
-                ),
-              ],
-            ),
-            const SizedBox(height: 30),
-            BlocListener<RegisterBloc, RegisterState>(
-              listener: (context, state) {
-                if (state is RegisterStepOneStateSuccess) {
-                  onNext();
-                } else if (state is RegisterStepOneStateFailure) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(state.message),
-                      backgroundColor: Colors.red,
+                      hint: 'DD',
+                      items: List.generate(31, (i) => (i + 1).toString()),
+                      value: selectedDay,
+                      onChanged: onSelectedDayChanged,
                     ),
-                  );
-                }
-              },
-              child: RegisterActionButton(
-                message: 'Next',
-                action: () {
-                  context.read<RegisterBloc>().add(RegisterStepOneSubmitted(
-                        firstName: firstNameController.text,
-                        lastName: lastNameController.text,
-                        userName: userNameController.text,
-                        gender: selectedGender ?? '',
-                        month: selectedMonth ?? '',
-                        day: selectedDay ?? '',
-                        year: selectedYear ?? '',
-                      ));
-                },
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: _buildDropdown(
+                        hint: 'YYYY',
+                        items: List.generate(
+                            100, (i) => (DateTime.now().year - i).toString()),
+                        value: selectedYear,
+                        onChanged: onSelectedYearChanged),
+                  ),
+                ],
               ),
-            ),
-          ],
+              const SizedBox(height: 30),
+              BlocListener<RegisterBloc, RegisterState>(
+                listener: (context, state) {
+                  if (state is RegisterStepOneStateSuccess) {
+                    onNext();
+                  } else if (state is RegisterStepOneStateFailure) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(state.message),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
+                },
+                child: RegisterActionButton(
+                  message: 'Next',
+                  action: () {
+                    context.read<RegisterBloc>().add(RegisterStepOneSubmitted(
+                          firstName: firstNameController.text,
+                          lastName: lastNameController.text,
+                          userName: userNameController.text,
+                          gender: selectedGender ?? '',
+                          month: selectedMonth ?? '',
+                          day: selectedDay ?? '',
+                          year: selectedYear ?? '',
+                        ));
+                  },
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
