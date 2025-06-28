@@ -53,8 +53,8 @@ class _CarpoolingScreenState extends State<CarpoolingScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // 1. Welcome Message
-              const CarpoolingWelcomeWidget(
-                  username: "Mohamed", image: Icons.person),
+              CarpoolingWelcomeWidget(
+                  username: user!.userName, image: Icons.person),
               const SizedBox(height: 16),
 
               // 2. Achievements List (horizontal)

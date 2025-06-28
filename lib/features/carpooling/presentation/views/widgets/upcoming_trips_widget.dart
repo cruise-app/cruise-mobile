@@ -2,6 +2,7 @@ import 'package:cruise/features/carpooling/data/services/carpooling_sockets.dart
 import 'package:cruise/features/carpooling/presentation/manager/carpool_screen_manager/carpool_screen_bloc.dart';
 import 'package:cruise/features/carpooling/presentation/views/widgets/carpool_trip_detail.dart';
 import 'package:cruise/features/carpooling/presentation/views/widgets/chat_screen.dart';
+import 'package:cruise/features/carpooling/presentation/views/widgets/trip_session_screen.dart';
 import 'package:cruise/features/login/data/models/user_model.dart';
 import 'package:cruise/util/shared/colors.dart';
 import 'package:flutter/material.dart';
@@ -192,7 +193,8 @@ class _UpcomingTripsWidgetState extends State<UpcomingTripsWidget> {
                                 ),
                                 const SizedBox(height: 12),
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     TextButton.icon(
                                       onPressed: () {
@@ -217,129 +219,173 @@ class _UpcomingTripsWidgetState extends State<UpcomingTripsWidget> {
                                             color: MyColors.lightYellow),
                                       ),
                                     ),
-                                    const SizedBox(width: 8),
-                                    if (isCreator)
-                                      TextButton.icon(
-                                        onPressed: () {
-                                          final parentContext = context;
-                                          showDialog(
-                                            context: context,
-                                            builder: (dialogContext) =>
-                                                AlertDialog(
-                                              backgroundColor: MyColors.black,
-                                              title: const Text(
-                                                'Delete Trip',
-                                                style: TextStyle(
-                                                    color:
-                                                        MyColors.lightYellow),
-                                              ),
-                                              content: const Text(
-                                                'Are you sure you want to delete this trip?',
-                                                style: TextStyle(
-                                                    color: MyColors.lightGrey),
-                                              ),
-                                              actions: [
-                                                TextButton(
-                                                  onPressed: () =>
-                                                      Navigator.pop(
-                                                          dialogContext),
-                                                  child: const Text(
-                                                    'Cancel',
+                                    isCreator
+                                        ? TextButton.icon(
+                                            onPressed: () {
+                                              final parentContext = context;
+                                              showDialog(
+                                                context: context,
+                                                builder: (dialogContext) =>
+                                                    AlertDialog(
+                                                  backgroundColor:
+                                                      MyColors.black,
+                                                  title: const Text(
+                                                    'Delete Trip',
+                                                    style: TextStyle(
+                                                        color: MyColors
+                                                            .lightYellow),
+                                                  ),
+                                                  content: const Text(
+                                                    'Are you sure you want to delete this trip?',
                                                     style: TextStyle(
                                                         color:
                                                             MyColors.lightGrey),
                                                   ),
+                                                  actions: [
+                                                    TextButton(
+                                                      onPressed: () =>
+                                                          Navigator.pop(
+                                                              dialogContext),
+                                                      child: const Text(
+                                                        'Cancel',
+                                                        style: TextStyle(
+                                                            color: MyColors
+                                                                .lightGrey),
+                                                      ),
+                                                    ),
+                                                    TextButton(
+                                                      onPressed: () {
+                                                        parentContext
+                                                            .read<
+                                                                CarpoolScreenBloc>()
+                                                            .add(DeleteUpcomingTrip(
+                                                                userId: trip
+                                                                    .driverId,
+                                                                tripId:
+                                                                    trip.id));
+                                                        Navigator.pop(
+                                                            dialogContext);
+                                                      },
+                                                      child: const Text(
+                                                        'Delete',
+                                                        style: TextStyle(
+                                                            color: Colors.red),
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ),
-                                                TextButton(
-                                                  onPressed: () {
-                                                    parentContext
-                                                        .read<
-                                                            CarpoolScreenBloc>()
-                                                        .add(DeleteUpcomingTrip(
-                                                            userId:
-                                                                trip.driverId,
-                                                            tripId: trip.id));
-                                                    Navigator.pop(
-                                                        dialogContext);
-                                                  },
-                                                  child: const Text(
-                                                    'Delete',
-                                                    style: TextStyle(
-                                                        color: Colors.red),
-                                                  ),
-                                                ),
-                                              ],
+                                              );
+                                            },
+                                            icon: const Icon(Icons.delete,
+                                                color: Colors.red),
+                                            label: const Text(
+                                              'Delete Trip',
+                                              style:
+                                                  TextStyle(color: Colors.red),
                                             ),
-                                          );
-                                        },
-                                        icon: const Icon(Icons.delete,
-                                            color: Colors.red),
-                                        label: const Text(
-                                          'Delete Trip',
-                                          style: TextStyle(color: Colors.red),
-                                        ),
-                                      )
-                                    else
-                                      TextButton.icon(
-                                        onPressed: () {
-                                          final parentContext = context;
-                                          showDialog(
-                                            context: context,
-                                            builder: (dialogContext) =>
-                                                AlertDialog(
-                                              backgroundColor: MyColors.black,
-                                              title: const Text(
-                                                'Leave Trip',
-                                                style: TextStyle(
-                                                    color:
-                                                        MyColors.lightYellow),
-                                              ),
-                                              content: const Text(
-                                                'Are you sure you want to leave this trip?',
-                                                style: TextStyle(
-                                                    color: MyColors.lightGrey),
-                                              ),
-                                              actions: [
-                                                TextButton(
-                                                  onPressed: () =>
-                                                      Navigator.pop(
-                                                          dialogContext),
-                                                  child: const Text(
-                                                    'Cancel',
+                                          )
+                                        : TextButton.icon(
+                                            onPressed: () {
+                                              final parentContext = context;
+                                              showDialog(
+                                                context: context,
+                                                builder: (dialogContext) =>
+                                                    AlertDialog(
+                                                  backgroundColor:
+                                                      MyColors.black,
+                                                  title: const Text(
+                                                    'Leave Trip',
+                                                    style: TextStyle(
+                                                        color: MyColors
+                                                            .lightYellow),
+                                                  ),
+                                                  content: const Text(
+                                                    'Are you sure you want to leave this trip?',
                                                     style: TextStyle(
                                                         color:
                                                             MyColors.lightGrey),
                                                   ),
+                                                  actions: [
+                                                    TextButton(
+                                                      onPressed: () =>
+                                                          Navigator.pop(
+                                                              dialogContext),
+                                                      child: const Text(
+                                                        'Cancel',
+                                                        style: TextStyle(
+                                                            color: MyColors
+                                                                .lightGrey),
+                                                      ),
+                                                    ),
+                                                    TextButton(
+                                                      onPressed: () {
+                                                        parentContext
+                                                            .read<
+                                                                CarpoolScreenBloc>()
+                                                            .add(
+                                                                LeaveUpcomingTrip(
+                                                                    userId:
+                                                                        user!
+                                                                            .id,
+                                                                    tripId: trip
+                                                                        .id));
+                                                        Navigator.pop(
+                                                            dialogContext);
+                                                      },
+                                                      child: const Text(
+                                                        'Leave',
+                                                        style: TextStyle(
+                                                            color:
+                                                                Colors.orange),
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ),
-                                                TextButton(
-                                                  onPressed: () {
-                                                    parentContext
-                                                        .read<
-                                                            CarpoolScreenBloc>()
-                                                        .add(LeaveUpcomingTrip(
-                                                            userId: user!.id,
-                                                            tripId: trip.id));
-                                                    Navigator.pop(
-                                                        dialogContext);
-                                                  },
-                                                  child: const Text(
-                                                    'Leave',
-                                                    style: TextStyle(
-                                                        color: Colors.orange),
-                                                  ),
-                                                ),
-                                              ],
+                                              );
+                                            },
+                                            icon: const Icon(Icons.exit_to_app,
+                                                color: Colors.orange),
+                                            label: const Text(
+                                              'Leave Trip',
+                                              style: TextStyle(
+                                                  color: Colors.orange),
                                             ),
-                                          );
-                                        },
-                                        icon: const Icon(Icons.exit_to_app,
-                                            color: Colors.orange),
-                                        label: const Text(
-                                          'Leave Trip',
-                                          style:
-                                              TextStyle(color: Colors.orange),
-                                        ),
+                                          ),
+                                    // if (DateTime.now().isAfter(trip
+                                    //         .departureTime
+                                    //         .subtract(const Duration(
+                                    //             minutes: 100))) &&
+                                    //     DateTime.now().isBefore(trip
+                                    //         .departureTime
+                                    //         .add(const Duration(minutes: 30))))
+                                    ElevatedButton.icon(
+                                      onPressed: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                TripSessionScreen(
+                                              trip: trip,
+                                              currentUserId: user!.id,
+                                              currentUserRole:
+                                                  user!.id == trip.driverId
+                                                      ? 'driver'
+                                                      : 'user',
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      icon: const Icon(Icons.directions,
+                                          color: MyColors.black),
+                                      label: const Text(
+                                        'Start Trip',
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(color: MyColors.black),
                                       ),
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: MyColors.lightYellow,
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ],
