@@ -11,7 +11,10 @@ import 'package:cruise/features/splash_screen/splash_screen.dart';
 import 'package:cruise/util/shared/widgets/bottom_navigation_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import '../../features/login/presentation/views/login_screen.dart';
+import 'package:cruise/features/login/presentation/views/login_screen.dart';
+import 'package:cruise/features/rental/presentation/views/car_booking_screen.dart';
+import 'package:cruise/features/rental/presentation/views/car_details_screen.dart';
+import 'package:cruise/features/rental/data/models/car_model.dart';
 
 abstract class AppRouter {
   static const kLobbyScreen = '/LobbyScreen';
@@ -25,6 +28,8 @@ abstract class AppRouter {
   static const kSplashScreen = '/';
   static const kCarpoolingSearchScreen = '/CarpoolingSearchScreen';
   static const kChatBotScreen = '/ChatBotScreen';
+  static const kCarBookingScreen = '/CarBookingScreen';
+  static const kCarDetailsScreen = '/CarDetailsScreen';
 
   static final GoRouter router = GoRouter(
     routes: [
@@ -69,6 +74,17 @@ abstract class AppRouter {
       GoRoute(
         path: kChatBotScreen,
         builder: (context, state) => const ChatbotScreen(),
+      ),
+      GoRoute(
+        path: kCarBookingScreen,
+        builder: (context, state) => const CarBookingScreen(),
+      ),
+      GoRoute(
+        path: kCarDetailsScreen,
+        builder: (context, state) {
+          final car = state.extra as CarModel;
+          return CarDetailsScreen(car: car);
+        },
       )
     ],
   );

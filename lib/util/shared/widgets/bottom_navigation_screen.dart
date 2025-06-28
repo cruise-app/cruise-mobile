@@ -2,6 +2,7 @@ import 'package:cruise/features/carpooling/presentation/manager/carpool_screen_m
 import 'package:cruise/features/carpooling/presentation/views/carpooling_screen.dart';
 import 'package:cruise/features/carpooling/presentation/views/carpooling_create_trip_screen.dart';
 import 'package:cruise/features/settings/settings_screen.dart';
+import 'package:cruise/features/rental/presentation/views/car_listing_screen.dart';
 import 'package:cruise/util/shared/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -29,10 +30,7 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
     BlocProvider(
         create: (context) => CarpoolScreenBloc(),
         child: const CarpoolingScreen()),
-    const Text(
-      'Rent',
-      style: optionStyle,
-    ),
+    CarListingScreen(),
     const SettingsScreen(),
   ];
 

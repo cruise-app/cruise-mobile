@@ -6,7 +6,7 @@ class ApiService {
   ApiService({Dio? dio})
       : _dio = dio ??
             Dio(BaseOptions(
-              baseUrl: "http://192.168.56.1:3000/",
+              baseUrl: const String.fromEnvironment('API_BASE_URL', defaultValue: 'http://localhost:3000/'),
               connectTimeout: const Duration(seconds: 10),
               receiveTimeout: const Duration(seconds: 10),
               validateStatus: (status) =>
@@ -14,15 +14,15 @@ class ApiService {
             )) {
     _dio.interceptors.add(InterceptorsWrapper(
       onRequest: (options, handler) {
-        print("Request: ${options.method} ${options.uri}");
+        // print("Request: ${options.method} ${options.uri}");
         return handler.next(options);
       },
       onResponse: (response, handler) {
-        print("Response: ${response.statusCode} ${response.data}");
+        // print("Response: ${response.statusCode} ${response.data}");
         return handler.next(response);
       },
       onError: (DioException e, handler) {
-        print("Dio Error: ${e.response?.statusCode} ${e.response?.data}");
+        // print("Dio Error: ${e.response?.statusCode} ${e.response?.data}");
         handler.resolve(Response(
           requestOptions: e.requestOptions,
           statusCode: e.response?.statusCode ?? 500,
@@ -64,8 +64,8 @@ class ApiService {
     required Map<String, dynamic> data,
   }) async {
     try {
-      print("POST: ${_dio.options.baseUrl}$endPoint");
-      print("Payload: $data");
+      // print("POST: ${_dio.options.baseUrl}$endPoint");
+      // print("Payload: $data");
       final response = await _dio.post(endPoint, data: data);
       return response;
     } on DioException catch (e) {
@@ -85,8 +85,8 @@ class ApiService {
     Map<String, dynamic>? data,
   }) async {
     try {
-      print("GET: ${_dio.options.baseUrl}$endPoint");
-      final response = await _dio.get(endPoint, data: data);
+      // print("GET: ${_dio.options.baseUrl}$endPoint  QUERY: $data");
+      final response = await _dio.get(endPoint, queryParameters: data);
       return response;
     } on DioException catch (e) {
       throw DioException(
