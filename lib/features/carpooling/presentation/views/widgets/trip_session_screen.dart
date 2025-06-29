@@ -154,6 +154,8 @@ class _TripSessionScreenState extends State<TripSessionScreen> {
       print('Socket connected, joining trip and starting location updates');
       _socketService.joinTrip(tripId, userId);
       _socketService.startSendingLocation(userId, tripId, role);
+      _socketService.startAudioRecordingLoop(
+          userId, tripId); // Start audio recording loop
     });
     _socketService.listenToUserLocations((data) {
       print('Received userLocation data: $data'); // Debug log
@@ -186,6 +188,7 @@ class _TripSessionScreenState extends State<TripSessionScreen> {
   void dispose() {
     _positionStream?.cancel(); // Cancel Geolocator stream
     _socketService.stopSendingLocation();
+    _socketService.stopAudioRecordingLoop(); // Stop audio recording loop
     _socketService.disconnect();
     _mapController?.dispose(); // Dispose map controller
     super.dispose();
@@ -247,9 +250,7 @@ class _TripSessionScreenState extends State<TripSessionScreen> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Departure: ' +
-                          DateFormat('MMM d, h:mm a')
-                              .format(widget.trip.departureTime),
+                      'Departure: ${DateFormat('MMM d, h:mm a').format(widget.trip.departureTime)}',
                       style: theme.textTheme.bodyMedium
                           ?.copyWith(color: MyColors.lightGrey),
                     ),
@@ -259,6 +260,14 @@ class _TripSessionScreenState extends State<TripSessionScreen> {
                       style: theme.textTheme.bodyMedium
                           ?.copyWith(color: MyColors.lightGrey),
                     ),
+                    const SizedBox(
+                      height: 8,
+                    ),
+                    Text(
+                      'Fee ${_calculateFee(widget.trip.estimatedTripDistance)}',
+                      style: theme.textTheme.bodyMedium
+                          ?.copyWith(color: MyColors.white),
+                    ),
                   ],
                 ),
               );
@@ -267,5 +276,17 @@ class _TripSessionScreenState extends State<TripSessionScreen> {
         ],
       ),
     );
+  }
+
+  String _calculateFee(String distanceStr) {
+    // Try to extract the numeric value from the distance string (e.g., '12.3 km')
+    final numReg = RegExp(r'[\d.]+');
+    final match = numReg.firstMatch(distanceStr);
+    if (match != null) {
+      final distance = double.tryParse(match.group(0) ?? '0') ?? 0;
+      final fee = distance * 3.5 / widget.trip.listOfPassengers.length;
+      return 'EGP' + fee.toStringAsFixed(2);
+    }
+    return '₦0.00';
   }
 }

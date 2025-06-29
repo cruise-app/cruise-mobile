@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/config/routes.dart';
 import '../../../../core/di/service_locator.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -8,7 +7,7 @@ import '../bloc/chatbot_bloc.dart';
 import '../bloc/chatbot_event.dart';
 
 class DashboardScreen extends StatefulWidget {
-  const DashboardScreen({Key? key}) : super(key: key);
+  const DashboardScreen({super.key});
 
   @override
   State<DashboardScreen> createState() => _DashboardScreenState();
@@ -17,7 +16,7 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends State<DashboardScreen> {
   // Simulated user ID for development
   final String userId = 'user_1234';
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,7 +46,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ],
               ),
               const SizedBox(height: 24.0),
-              
+
               // User greeting
               Row(
                 children: [
@@ -63,7 +62,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ],
               ),
               const SizedBox(height: 32.0),
-              
+
               // Chat with Cruise section
               Row(
                 children: [
@@ -93,7 +92,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ],
               ),
               const SizedBox(height: 24.0),
-              
+
               // Topics section
               Text(
                 'Topics',
@@ -104,7 +103,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 children: [
                   TextButton(
                     onPressed: () {},
-                    child: Text(
+                    child: const Text(
                       'See all',
                       style: TextStyle(
                         color: AppColors.primaryColor,
@@ -114,7 +113,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ],
               ),
               const SizedBox(height: 8.0),
-              
+
               // Topic icons row
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -174,14 +173,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ],
               ),
               const SizedBox(height: 24.0),
-              
+
               // History section
               Text(
                 'History',
                 style: AppTextStyles.headingSmall,
               ),
               const SizedBox(height: 16.0),
-              
+
               // Chat history items
               Expanded(
                 child: ListView(

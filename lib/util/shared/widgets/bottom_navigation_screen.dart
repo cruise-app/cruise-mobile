@@ -1,11 +1,9 @@
 import 'package:cruise/features/carpooling/presentation/manager/carpool_screen_manager/carpool_screen_bloc.dart';
 import 'package:cruise/features/carpooling/presentation/views/carpooling_screen.dart';
-import 'package:cruise/features/carpooling/presentation/views/carpooling_create_trip_screen.dart';
 import 'package:cruise/features/settings/settings_screen.dart';
 import 'package:cruise/util/shared/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:line_icons/line_icons.dart';
 

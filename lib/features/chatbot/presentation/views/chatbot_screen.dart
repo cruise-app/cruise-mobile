@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import '../../../../core/config/app_config.dart';
 import '../../../../core/di/service_locator.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_text_styles.dart';
 import '../../domain/entities/message.dart';
 import '../../domain/entities/car.dart';
 import '../bloc/chatbot_bloc.dart';
@@ -19,7 +17,7 @@ import '../widgets/safety_check_card.dart';
 import '../widgets/recommendation_card.dart';
 
 class ChatbotScreen extends StatefulWidget {
-  const ChatbotScreen({Key? key}) : super(key: key);
+  const ChatbotScreen({super.key});
 
   @override
   State<ChatbotScreen> createState() => _ChatbotScreenState();
@@ -30,20 +28,20 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
   final String userId = 'user_1234';
   final ScrollController _scrollController = ScrollController();
   late ChatbotBloc _chatbotBloc;
-  
+
   @override
   void initState() {
     super.initState();
     _chatbotBloc = sl<ChatbotBloc>();
     _chatbotBloc.add(const InitChatbotEvent());
   }
-  
+
   @override
   void dispose() {
     _scrollController.dispose();
     super.dispose();
   }
-  
+
   void _scrollToBottom() {
     if (_scrollController.hasClients) {
       Future.delayed(const Duration(milliseconds: 100), () {
@@ -55,7 +53,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
       });
     }
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -80,7 +78,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                 Expanded(
                   child: _buildChatMessages(state),
                 ),
-                
+
                 // Input field
                 InputField(
                   isLoading: state is MessageSending,
@@ -98,7 +96,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
       ),
     );
   }
-  
+
   AppBar _buildAppBar() {
     return AppBar(
       backgroundColor: AppColors.backgroundDark,
@@ -107,17 +105,17 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
         icon: const Icon(Icons.arrow_back),
         onPressed: () => Navigator.pop(context),
       ),
-      title: Row(
+      title: const Row(
         children: [
-          const ProfileAvatar(
+          ProfileAvatar(
             sender: MessageSender.bot,
             size: 36.0,
           ),
-          const SizedBox(width: 12.0),
+          SizedBox(width: 12.0),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+              Text(
                 'RideBot',
                 style: TextStyle(
                   fontSize: 16.0,
@@ -143,11 +141,11 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
       ],
     );
   }
-  
+
   Widget _buildChatMessages(ChatbotState state) {
     List<Message> messages = [];
     bool isLoading = false;
-    
+
     if (state is MessageSent) {
       messages = state.allMessages;
     } else if (state is MessageSending && _chatbotBloc.messages.isNotEmpty) {
@@ -157,7 +155,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
     } else if (state is ChatbotLoading && _chatbotBloc.messages.isNotEmpty) {
       messages = _chatbotBloc.messages;
     }
-    
+
     return messages.isEmpty
         ? const Center(
             child: Text(
@@ -176,14 +174,14 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                     // Add typing indicator when loading
                     return _buildTypingIndicator();
                   }
-                  
+
                   final message = messages[index];
                   return Column(
                     children: [
                       // Date header for first message or when date changes
                       if (index == 0 || _shouldShowDateHeader(messages, index))
                         _buildDateHeader(message.timestamp),
-                      
+
                       // Message content
                       _buildMessageContent(message),
                     ],
@@ -193,25 +191,25 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
             ],
           );
   }
-  
+
   bool _shouldShowDateHeader(List<Message> messages, int index) {
     if (index == 0) return true;
-    
+
     final currentDate = DateTime(
       messages[index].timestamp.year,
       messages[index].timestamp.month,
       messages[index].timestamp.day,
     );
-    
+
     final previousDate = DateTime(
       messages[index - 1].timestamp.year,
       messages[index - 1].timestamp.month,
       messages[index - 1].timestamp.day,
     );
-    
+
     return currentDate != previousDate;
   }
-  
+
   Widget _buildDateHeader(DateTime timestamp) {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
@@ -221,7 +219,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
       timestamp.month,
       timestamp.day,
     );
-    
+
     String dateText;
     if (messageDate == today) {
       dateText = 'Today';
@@ -230,7 +228,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
     } else {
       dateText = DateFormat('MMM d, yyyy').format(timestamp);
     }
-    
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 16.0),
       child: Center(
@@ -245,7 +243,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
           ),
           child: Text(
             dateText,
-            style: TextStyle(
+            style: const TextStyle(
               color: AppColors.textColorLight,
               fontSize: 12.0,
             ),
@@ -254,31 +252,31 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
       ),
     );
   }
-  
+
   Widget _buildMessageContent(Message message) {
     // Handle different message types
     switch (message.type) {
       case MessageType.carOptions:
         return _buildCarOptionsMessage(message);
-      
+
       case MessageType.carpool:
         return _buildCarpoolMessage(message);
-      
+
       case MessageType.safety:
         return _buildSafetyMessage(message);
-      
+
       case MessageType.recommendation:
         return _buildRecommendationMessage(message);
-      
+
       case MessageType.location:
         return _buildLocationMessage(message);
-      
+
       case MessageType.text:
       default:
         return _buildTextMessage(message);
     }
   }
-  
+
   Widget _buildTextMessage(Message message) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8.0),
@@ -294,7 +292,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                 size: 32.0,
               ),
             ),
-          
+
           // Message bubble
           Expanded(
             child: MessageBubble(
@@ -302,74 +300,75 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
               onTap: () {},
             ),
           ),
-          
+
           // Avatar for user messages (empty space to align)
-          if (message.sender == MessageSender.user)
-            const SizedBox(width: 40.0),
+          if (message.sender == MessageSender.user) const SizedBox(width: 40.0),
         ],
       ),
     );
   }
-  
+
   Widget _buildCarOptionsMessage(Message message) {
     final cars = (message.additionalData?['cars'] as List?)?.map((car) {
-      return Car(
-        id: car['id'],
-        model: car['model'],
-        plateNumber: car['plateNumber'],
-        type: _mapCarTypeFromString(car['type']),
-        imageUrl: car['imageUrl'],
-        price: car['price'],
-        estimatedTimeMin: car['estimatedTimeMin'],
-      );
-    }).toList() ?? [];
-    
+          return Car(
+            id: car['id'],
+            model: car['model'],
+            plateNumber: car['plateNumber'],
+            type: _mapCarTypeFromString(car['type']),
+            imageUrl: car['imageUrl'],
+            price: car['price'],
+            estimatedTimeMin: car['estimatedTimeMin'],
+          );
+        }).toList() ??
+        [];
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Bot message
         _buildTextMessage(message),
-        
+
         // Car options
         ...cars.map((car) => Padding(
-          padding: const EdgeInsets.only(
-            left: 40.0,
-            right: 8.0,
-            bottom: 8.0,
-          ),
-          child: CarCard(
-            car: car,
-            onTap: () {
-              _chatbotBloc.add(BookRideEvent(
-                userId: userId,
-                rideDetails: {
-                  'car_id': car.id,
-                  'pickup': 'Current Location',
-                  'dropoff': 'Destination',
+              padding: const EdgeInsets.only(
+                left: 40.0,
+                right: 8.0,
+                bottom: 8.0,
+              ),
+              child: CarCard(
+                car: car,
+                onTap: () {
+                  _chatbotBloc.add(BookRideEvent(
+                    userId: userId,
+                    rideDetails: {
+                      'car_id': car.id,
+                      'pickup': 'Current Location',
+                      'dropoff': 'Destination',
+                    },
+                  ));
                 },
-              ));
-            },
-          ),
-        )).toList(),
+              ),
+            ))
       ],
     );
   }
-  
+
   Widget _buildCarpoolMessage(Message message) {
-    final opportunities = (message.additionalData?['opportunities'] as List? ?? []);
-    
+    final opportunities =
+        (message.additionalData?['opportunities'] as List? ?? []);
+
     if (opportunities.isEmpty) {
       return _buildTextMessage(message);
     }
-    
+
     final opportunity = opportunities.first;
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Bot message
         _buildTextMessage(message),
-        
+
         // Carpool opportunity
         Padding(
           padding: const EdgeInsets.only(
@@ -401,14 +400,14 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
       ],
     );
   }
-  
+
   Widget _buildSafetyMessage(Message message) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Bot message
         _buildTextMessage(message),
-        
+
         // Safety check card
         Padding(
           padding: const EdgeInsets.only(
@@ -431,14 +430,14 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
       ],
     );
   }
-  
+
   Widget _buildRecommendationMessage(Message message) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Bot message
         _buildTextMessage(message),
-        
+
         // Recommendation card
         Padding(
           padding: const EdgeInsets.only(
@@ -461,12 +460,12 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
       ],
     );
   }
-  
+
   Widget _buildLocationMessage(Message message) {
     // For now, just show as a text message
     return _buildTextMessage(message);
   }
-  
+
   Widget _buildTypingIndicator() {
     return Align(
       alignment: Alignment.centerLeft,
@@ -525,7 +524,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
       ),
     );
   }
-  
+
   Widget _buildDot({int delay = 0}) {
     return Container(
       width: 8,
@@ -558,7 +557,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
       ),
     );
   }
-  
+
   CarType _mapCarTypeFromString(String type) {
     switch (type) {
       case 'comfort':

@@ -1,0 +1,2 @@
+D:/StudioProjects/CRUISE/android/app/.cxx/Debug/2wq4l4t1/x86_64/CMakeFiles/edit_cache.dir
+D:/StudioProjects/CRUISE/android/app/.cxx/Debug/2wq4l4t1/x86_64/CMakeFiles/rebuild_cache.dir

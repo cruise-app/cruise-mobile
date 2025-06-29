@@ -35,19 +35,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final appTheme = ThemeData(
-      useMaterial3: true,
-      brightness: Brightness.dark,
-      scaffoldBackgroundColor: AppColors.backgroundDark,
-      primaryColor: AppColors.primaryColor,
-      colorScheme: const ColorScheme.dark(
-        primary: AppColors.primaryColor,
-        secondary: AppColors.secondaryColor,
-        background: AppColors.backgroundDark,
-        surface: AppColors.cardColor,
-        error: AppColors.errorColor,
-      ),
-    );
     return Sizer(
       // ✅ Wrap with Sizer to initialize it
       builder: (context, orientation, deviceType) {

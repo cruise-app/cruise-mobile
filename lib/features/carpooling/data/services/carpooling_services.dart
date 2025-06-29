@@ -1,7 +1,7 @@
 import 'package:cruise/features/carpooling/data/models/create_trip_response.dart';
 import 'package:cruise/features/carpooling/data/models/get_polyline_response.dart';
 import 'package:cruise/features/carpooling/data/models/search_trip_response.dart';
-import 'package:cruise/features/carpooling/data/models/search_trips_request.dart';
+
 import 'package:cruise/util/shared/api_service.dart';
 import 'package:cruise/util/shared/failure_model.dart';
 import 'package:dartz/dartz.dart';

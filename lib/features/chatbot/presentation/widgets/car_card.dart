@@ -52,7 +52,7 @@ class CarCard extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 16.0),
-            
+
             // Car details
             Expanded(
               child: Column(
@@ -85,7 +85,7 @@ class CarCard extends StatelessWidget {
                 ],
               ),
             ),
-            
+
             // Price and time
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
