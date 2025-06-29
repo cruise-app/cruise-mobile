@@ -6,6 +6,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:dio/dio.dart';
 
 class SocketService {
   late IO.Socket socket;
@@ -154,13 +155,24 @@ class SocketService {
         final String base64Audio = base64Encode(audioBytes);
         print(
             '[AUDIO] Sending audio to backend. Size: ${audioBytes.length} bytes');
-        // emitEvent('voiceData', {
-        //   'userId': userId,
-        //   'tripId': tripId,
-        //   'audio': base64Audio,
-        //   'format': 'aac',
-        //   'timestamp': DateTime.now().toIso8601String(),
-        // });
+        final dio = Dio();
+        try {
+          final response = await dio.post(
+            'http://localhost:5002/voiceData',
+            data: {
+              'userId': userId,
+              'tripId': tripId,
+              'audio': base64Audio,
+              'format': 'mp3',
+              'timestamp': DateTime.now().toIso8601String(),
+            },
+            options: Options(headers: {'Content-Type': 'application/json'}),
+          );
+          print(
+              '[AUDIO] Audio sent to backend. Response: \\${response.statusCode}');
+        } catch (e) {
+          print('[AUDIO] Failed to send audio to backend: \\${e.toString()}');
+        }
         await audioFile.delete(); // Clean up
         print('[AUDIO] Audio file deleted after sending.');
       } else {
