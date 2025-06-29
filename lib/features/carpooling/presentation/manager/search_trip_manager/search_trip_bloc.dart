@@ -45,7 +45,8 @@ class SearchTripBloc extends Bloc<SearchTripEvent, SearchTripState> {
             message: "Please provide both start and end locations."));
         return;
       }
-
+      print(event.startLocation);
+      print(event.endLocation);
       // Mock data for demonstration purposes
       final result = await searchTripUsecase.getSearchTrips(SearchTripsRequest(
         userId: event.userId,

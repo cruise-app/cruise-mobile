@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sizer/sizer.dart';
 import 'package:hive/hive.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 void main() async {
   // Open a box for user data
@@ -20,12 +21,18 @@ void main() async {
     ),
   );
   await setupServiceLocator();
-  final dir = await getApplicationDocumentsDirectory();
-  Hive.init(dir.path);
-
-  Hive.registerAdapter(UserModelAdapter());
-  // await Hive.openBox<UserModel>('userData');
-  // await Hive.openBox<String>('token');
+  
+  // Initialize Hive only on mobile platforms
+  if (!kIsWeb) {
+    final dir = await getApplicationDocumentsDirectory();
+    Hive.init(dir.path);
+    Hive.registerAdapter(UserModelAdapter());
+    // await Hive.openBox<UserModel>('userData');
+    // await Hive.openBox<String>('token');
+  } else {
+    // For web, Hive uses IndexedDB automatically
+    Hive.registerAdapter(UserModelAdapter());
+  }
 
   runApp(const MyApp());
 }

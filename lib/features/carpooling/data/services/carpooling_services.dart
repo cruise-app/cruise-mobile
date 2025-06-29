@@ -33,11 +33,12 @@ class CarpoolingService {
   Future<Either<Failure, Map<String, dynamic>>> getSuggestions(
       Map<String, dynamic> requestData) async {
     try {
+      print("Trying to get suggestions $requestData");
       final response = await _apiService.post(
         endPoint: '${_preUrl}get-suggested-locations',
         data: requestData,
       );
-
+      print(response);
       if (response.statusCode == 200) {
         return Right(response.data);
       } else {
@@ -68,12 +69,13 @@ class CarpoolingService {
 
   Future<Either<Failure, SearchTripResponse>> searchTrips(
       Map<String, dynamic> requestData) async {
+    print(requestData);
     try {
       final response = await _apiService.get(
         endPoint: '${_preUrl}search-trips',
         data: requestData,
       );
-
+      print(response);
       if (response.statusCode == 200) {
         if (response.data['data']?.isNotEmpty == true) {
           print(

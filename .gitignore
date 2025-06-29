@@ -27,6 +27,7 @@ migrate_working_dir/
 .dart_tool/
 .flutter-plugins
 .flutter-plugins-dependencies
+.packages
 .pub-cache/
 .pub/
 /build/
@@ -41,3 +42,74 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Web related
+/web/
+
+# Windows related
+/windows/
+
+# macOS related
+/macos/
+
+# Linux related
+/linux/
+
+# Build outputs
+*.apk
+*.aab
+*.ipa
+*.app
+
+# Test coverage
+coverage/
+
+# Environment variables
+.env*
+
+# IDE
+.vscode/
+.idea/
+
+# OS generated files
+Thumbs.db
+ehthumbs.db
+
+# Folder config file
+[Dd]esktop.ini
+
+# Windows shortcuts
+*.lnk
+
+# macOS
+.DS_Store?
+.Spotlight-V100
+.Trashes
+Icon?
+
+# Network Trash Folder
+.AppleDouble
+.LSOverride
+
+# Thumbnails
+._*
+
+# Files that might appear in the root of a volume
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Directories potentially created on remote AFP share
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# CMake build directories
+/android/app/.cxx/
+/ios/Pods/

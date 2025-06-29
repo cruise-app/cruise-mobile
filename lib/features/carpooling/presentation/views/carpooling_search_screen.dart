@@ -102,6 +102,7 @@ class _CarpoolingSearchScreenState extends State<CarpoolingSearchScreen> {
         onPressed: (startLocationController.text.isNotEmpty &&
                 endLocationController.text.isNotEmpty)
             ? () {
+                print("controller ${startLocationController.text}");
                 print("User ID: ${user?.id}");
                 context.read<SearchTripBloc>().add(
                       GetTrips(

@@ -9,6 +9,7 @@ class PlaceSuggestionUsecase {
 
   Future<Either<Failure, List<String>>> getPlaceSuggestions(
       String query) async {
+    print("I am querying");
     final response = await _createTripService.getSuggestions({'input': query});
     return response.fold(
       (failure) => Left(failure),
