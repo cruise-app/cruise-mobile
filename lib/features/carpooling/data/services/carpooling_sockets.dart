@@ -103,6 +103,7 @@ class SocketService {
 
   void stopSendingLocation() {
     _locationTimer?.cancel();
+    disconnect();
     print('Stopped sending location updates');
   }
 
@@ -176,5 +177,6 @@ class SocketService {
     }
     await _audioRecorder?.closeRecorder();
     _audioRecorder = null;
+    disconnect();
   }
 }

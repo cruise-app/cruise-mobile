@@ -55,10 +55,21 @@ class CarpoolScreenBloc extends Bloc<CarpoolScreenEvent, CarpoolScreenState> {
       }
     };
 
-    // Set the new listener
+    // Attach the listener BEFORE emitting the event
     socketService.onEvent('upComingTrips', _upcomingTripsListener!);
 
-    socketService.emitEvent('getUpComingTrips', event.userId);
+    // Emit only after socket is connected
+    if (socketService.socket.connected) {
+      socketService.emitEvent('getUpComingTrips', event.userId);
+    } else {
+      // Wait for connection, then emit
+      void onConnect(_) {
+        socketService.emitEvent('getUpComingTrips', event.userId);
+        socketService.socket.off('connect', onConnect);
+      }
+
+      socketService.socket.on('connect', onConnect);
+    }
   }
 
   void _onUpcomingTripsReceived(

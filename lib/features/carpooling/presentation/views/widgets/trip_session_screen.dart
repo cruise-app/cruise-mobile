@@ -150,13 +150,22 @@ class _TripSessionScreenState extends State<TripSessionScreen> {
 
     _socketService.connect();
     // Wait for socket connection before joining trip and starting location updates
-    _socketService.socket.onConnect((_) {
+    void startSession() {
       print('Socket connected, joining trip and starting location updates');
       _socketService.joinTrip(tripId, userId);
       _socketService.startSendingLocation(userId, tripId, role);
-      _socketService.startAudioRecordingLoop(
-          userId, tripId); // Start audio recording loop
-    });
+      _socketService.startAudioRecordingLoop(userId, tripId);
+    }
+
+    // If already connected, start immediately
+    if (_socketService.socket.connected) {
+      startSession();
+    } else {
+      // Otherwise, wait for connection
+      _socketService.socket.onConnect((_) {
+        startSession();
+      });
+    }
     _socketService.listenToUserLocations((data) {
       print('Received userLocation data: $data'); // Debug log
       if (data == null) return;
@@ -189,7 +198,7 @@ class _TripSessionScreenState extends State<TripSessionScreen> {
     _positionStream?.cancel(); // Cancel Geolocator stream
     _socketService.stopSendingLocation();
     _socketService.stopAudioRecordingLoop(); // Stop audio recording loop
-    _socketService.disconnect();
+    //_socketService.disconnect();
     _mapController?.dispose(); // Dispose map controller
     super.dispose();
   }
