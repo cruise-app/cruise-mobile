@@ -1,6 +1,5 @@
 import 'package:cruise/util/shared/colors.dart';
 import 'package:flutter/material.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import '../../../data/models/car_model.dart';
 
 class CarCardWidget extends StatelessWidget {
@@ -8,7 +7,8 @@ class CarCardWidget extends StatelessWidget {
   final int bookingDays;
   final VoidCallback? onTap;
 
-  const CarCardWidget({super.key, required this.car, this.onTap, this.bookingDays = 1});
+  const CarCardWidget(
+      {super.key, required this.car, this.onTap, this.bookingDays = 1});
 
   @override
   Widget build(BuildContext context) {
@@ -52,21 +52,40 @@ class CarCardWidget extends StatelessWidget {
                     tag: 'car_${car.name}',
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(8),
-                      child: CachedNetworkImage(
-                        imageUrl: car.imagePath,
+                      child: Image.network(
+                        car.imagePath,
                         fit: BoxFit.cover,
-                        placeholder: (context, url) => Container(
-                          color: MyColors.darkGrey,
-                          child: const Center(
-                            child: CircularProgressIndicator(
-                              color: MyColors.orange,
+                        loadingBuilder: (context, child, loadingProgress) {
+                          print('Loading image: ${car.imagePath}');
+                          if (loadingProgress == null) {
+                            print('Image loaded successfully');
+                            return child;
+                          }
+                          print(
+                              'Loading progress: ${loadingProgress.cumulativeBytesLoaded}/${loadingProgress.expectedTotalBytes}');
+                          return Container(
+                            color: MyColors.darkGrey,
+                            child: const Center(
+                              child: CircularProgressIndicator(
+                                color: MyColors.orange,
+                              ),
                             ),
-                          ),
-                        ),
-                        errorWidget: (context, url, error) => const Icon(
-                          Icons.broken_image,
-                          color: MyColors.lightGrey,
-                        ),
+                          );
+                        },
+                        errorBuilder: (context, error, stackTrace) {
+                          print('Image loading error: $error');
+                          print('Image URL: ${car.imagePath}');
+                          return Container(
+                            color: MyColors.darkGrey,
+                            child: const Center(
+                              child: Icon(
+                                Icons.broken_image,
+                                color: MyColors.lightGrey,
+                                size: 50,
+                              ),
+                            ),
+                          );
+                        },
                       ),
                     ),
                   ),
@@ -84,7 +103,8 @@ class CarCardWidget extends StatelessWidget {
                 // Transmission and similar label
                 Row(
                   children: [
-                    const Icon(Icons.settings, color: MyColors.lightGrey, size: 12),
+                    const Icon(Icons.settings,
+                        color: MyColors.lightGrey, size: 12),
                     const SizedBox(width: 4),
                     Text(
                       car.transmission,
@@ -142,4 +162,4 @@ class CarCardWidget extends StatelessWidget {
       ),
     );
   }
-} 
+}

@@ -1,6 +1,5 @@
 import 'package:cruise/util/shared/colors.dart';
 import 'package:flutter/material.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import '../../data/models/car_model.dart';
 import '../../data/models/booking_range.dart';
 import '../../data/services/rental_services.dart';
@@ -8,21 +7,27 @@ import 'package:dartz/dartz.dart';
 import 'package:cruise/util/shared/failure_model.dart';
 
 class CarDetailsScreen extends StatelessWidget {
-  final CarModel car;
-  final int bookingDays;
+  final CarModel? car;
+  final int? bookingDays;
   final String? selectedLocation;
   final BookingRange? selectedRange;
-  const CarDetailsScreen({super.key, required this.car, this.bookingDays = 1, this.selectedLocation, this.selectedRange});
+  const CarDetailsScreen(
+      {super.key,
+      this.car,
+      this.bookingDays = 1,
+      this.selectedLocation,
+      this.selectedRange});
 
-  bool _isDateOverlapping(DateTime start, DateTime end, List<Map<String, dynamic>> reservations) {
+  bool _isDateOverlapping(
+      DateTime start, DateTime end, List<Map<String, dynamic>> reservations) {
     for (var reservation in reservations) {
       final resStart = DateTime.parse(reservation['startDate']);
       final resEnd = DateTime.parse(reservation['endDate']);
-      
+
       // Check if the new booking overlaps with existing reservation
       if ((start.isBefore(resEnd) && end.isAfter(resStart)) ||
-          (start.millisecondsSinceEpoch == resStart.millisecondsSinceEpoch || 
-           end.millisecondsSinceEpoch == resEnd.millisecondsSinceEpoch)) {
+          (start.millisecondsSinceEpoch == resStart.millisecondsSinceEpoch ||
+              end.millisecondsSinceEpoch == resEnd.millisecondsSinceEpoch)) {
         return true;
       }
     }
@@ -43,13 +48,14 @@ class CarDetailsScreen extends StatelessWidget {
             onPressed: () => Navigator.of(context).pop(),
           ),
           title: Text(
-            car.name,
+            car!.name,
             style: const TextStyle(color: MyColors.lightYellow),
           ),
           actions: [
             IconButton(
               icon: const Icon(Icons.close, color: MyColors.lightYellow),
-              onPressed: () => Navigator.of(context).popUntil((route) => route.isFirst),
+              onPressed: () =>
+                  Navigator.of(context).popUntil((route) => route.isFirst),
             )
           ],
           bottom: const TabBar(
@@ -65,52 +71,63 @@ class CarDetailsScreen extends StatelessWidget {
             ],
           ),
         ),
-        floatingActionButton: FutureBuilder<Either<Failure, List<Map<String, dynamic>>>>(
-          future: RentalService().getReservations(car.plateNumber),
+        floatingActionButton:
+            FutureBuilder<Either<Failure, List<Map<String, dynamic>>>>(
+          future: RentalService().getReservations(car!.plateNumber),
           builder: (context, snapshot) {
-            final reservations = snapshot.data?.fold((l) => <Map<String, dynamic>>[], (r) => r) ?? [];
-            final isOverlapping = selectedRange != null && 
-                _isDateOverlapping(selectedRange!.start, selectedRange!.end, reservations);
-            
+            final reservations = snapshot.data
+                    ?.fold((l) => <Map<String, dynamic>>[], (r) => r) ??
+                [];
+            final isOverlapping = selectedRange != null &&
+                _isDateOverlapping(
+                    selectedRange!.start, selectedRange!.end, reservations);
+
             return FloatingActionButton.extended(
-              onPressed: selectedRange == null || isOverlapping ? null : () async {
-                final service = RentalService();
-                final either = await service.reserveCar(
-                  carId: car.plateNumber,
-                  renterId: 'demo-user', // TODO replace with auth user id
-                  startDate: selectedRange!.start,
-                  endDate: selectedRange!.end,
-                  pickupLocation: {'lat': 0, 'lng': 0},
-                );
-                either.fold(
-                  (l) => ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Reservation failed: ${l.message}')),
-                  ),
-                  (r) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Car reserved successfully!')),
-                    );
-                    // Navigate back to refresh the list
-                    Navigator.of(context).pop();
-                  },
-                );
-              },
+              onPressed: selectedRange == null || isOverlapping
+                  ? null
+                  : () async {
+                      final service = RentalService();
+                      final either = await service.reserveCar(
+                        carId: car!.plateNumber,
+                        renterId: 'demo-user', // TODO replace with auth user id
+                        startDate: selectedRange!.start,
+                        endDate: selectedRange!.end,
+                        pickupLocation: {'lat': 0, 'lng': 0},
+                      );
+                      either.fold(
+                        (l) => ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                              content:
+                                  Text('Reservation failed: ${l.message}')),
+                        ),
+                        (r) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('Car reserved successfully!')),
+                          );
+                          // Navigate back to refresh the list
+                          Navigator.of(context).pop();
+                        },
+                      );
+                    },
               label: Text(isOverlapping ? 'Period Unavailable' : 'Reserve'),
               icon: Icon(isOverlapping ? Icons.block : Icons.car_rental),
-              backgroundColor: isOverlapping ? MyColors.darkGrey : MyColors.orange,
+              backgroundColor:
+                  isOverlapping ? MyColors.darkGrey : MyColors.orange,
             );
           },
         ),
         body: TabBarView(
           children: [
-            _buildGalleryTab(car),
-            _buildPriceTab(car),
-            _buildHighlightsTab(car),
-            _buildReportTab(car),
+            _buildGalleryTab(car!),
+            _buildPriceTab(car!),
+            _buildHighlightsTab(car!),
+            _buildReportTab(car!),
           ],
         ),
-        bottomNavigationBar: FutureBuilder<Either<Failure, List<Map<String, dynamic>>>>(
-          future: RentalService().getReservations(car.plateNumber),
+        bottomNavigationBar:
+            FutureBuilder<Either<Failure, List<Map<String, dynamic>>>>(
+          future: RentalService().getReservations(car!.plateNumber),
           builder: (context, snapshot) {
             if (!snapshot.hasData) return const SizedBox.shrink();
             return snapshot.data!.fold(
@@ -126,10 +143,13 @@ class CarDetailsScreen extends StatelessWidget {
                         children: [
                           Row(
                             children: [
-                              const Icon(Icons.calendar_month, color: MyColors.lightYellow, size: 16),
+                              const Icon(Icons.calendar_month,
+                                  color: MyColors.lightYellow, size: 16),
                               const SizedBox(width: 8),
-                              const Text('Reserved periods:', 
-                                style: TextStyle(color: MyColors.lightYellow, fontWeight: FontWeight.bold)),
+                              const Text('Reserved periods:',
+                                  style: TextStyle(
+                                      color: MyColors.lightYellow,
+                                      fontWeight: FontWeight.bold)),
                             ],
                           ),
                           const SizedBox(height: 8),
@@ -138,13 +158,15 @@ class CarDetailsScreen extends StatelessWidget {
                             child: ListView.separated(
                               scrollDirection: Axis.horizontal,
                               itemCount: list.length,
-                              separatorBuilder: (_, __) => const SizedBox(width: 12),
+                              separatorBuilder: (_, __) =>
+                                  const SizedBox(width: 12),
                               itemBuilder: (context, index) {
                                 final res = list[index];
                                 final s = DateTime.parse(res['startDate']);
                                 final en = DateTime.parse(res['endDate']);
                                 return Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 12, vertical: 8),
                                   decoration: BoxDecoration(
                                     color: MyColors.orange.withOpacity(0.2),
                                     borderRadius: BorderRadius.circular(16),
@@ -152,7 +174,8 @@ class CarDetailsScreen extends StatelessWidget {
                                   ),
                                   child: Text(
                                     '${s.day}/${s.month} - ${en.day}/${en.month}',
-                                    style: const TextStyle(color: MyColors.orange, fontSize: 12),
+                                    style: const TextStyle(
+                                        color: MyColors.orange, fontSize: 12),
                                   ),
                                 );
                               },
@@ -177,18 +200,35 @@ class CarDetailsScreen extends StatelessWidget {
             aspectRatio: 16 / 9,
             child: Hero(
               tag: 'car_${car.name}',
-              child: CachedNetworkImage(
-                imageUrl: car.imagePath,
+              child: Image.network(
+                car.imagePath,
                 fit: BoxFit.cover,
-                placeholder: (context, url) => Container(
-                  color: MyColors.darkGrey,
-                  child: const Center(
-                    child: CircularProgressIndicator(color: MyColors.orange),
-                  ),
-                ),
-                errorWidget: (context, url, error) => const Center(
-                  child: Icon(Icons.broken_image, color: MyColors.lightGrey),
-                ),
+                loadingBuilder: (context, child, loadingProgress) {
+                  print('Details - Loading image: ${car.imagePath}');
+                  if (loadingProgress == null) {
+                    print('Details - Image loaded successfully');
+                    return child;
+                  }
+                  print(
+                      'Details - Loading progress: ${loadingProgress.cumulativeBytesLoaded}/${loadingProgress.expectedTotalBytes}');
+                  return Container(
+                    color: MyColors.darkGrey,
+                    child: const Center(
+                      child: CircularProgressIndicator(color: MyColors.orange),
+                    ),
+                  );
+                },
+                errorBuilder: (context, error, stackTrace) {
+                  print('Details - Image loading error: $error');
+                  print('Details - Image URL: ${car.imagePath}');
+                  return Container(
+                    color: MyColors.darkGrey,
+                    child: const Center(
+                      child: Icon(Icons.broken_image,
+                          color: MyColors.lightGrey, size: 50),
+                    ),
+                  );
+                },
               ),
             ),
           ),
@@ -215,8 +255,8 @@ class CarDetailsScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(car.description,
-                    style:
-                        const TextStyle(color: MyColors.lightGrey, fontSize: 12)),
+                    style: const TextStyle(
+                        color: MyColors.lightGrey, fontSize: 12)),
                 const SizedBox(height: 16),
                 Row(
                   children: [
@@ -226,7 +266,7 @@ class CarDetailsScreen extends StatelessWidget {
                             fontWeight: FontWeight.bold,
                             fontSize: 16)),
                     const Spacer(),
-                    Text('${car.pricePerDay * bookingDays} Total',
+                    Text('${car.pricePerDay * bookingDays!} Total',
                         style: const TextStyle(
                           color: MyColors.lightGrey,
                           decoration: TextDecoration.underline,
@@ -240,9 +280,11 @@ class CarDetailsScreen extends StatelessWidget {
                         color: MyColors.lightGrey, size: 16),
                     SizedBox(width: 6),
                     Text('View all Price benefits',
-                        style: TextStyle(color: MyColors.lightGrey, fontSize: 12)),
+                        style:
+                            TextStyle(color: MyColors.lightGrey, fontSize: 12)),
                     Spacer(),
-                    Icon(Icons.chevron_right, color: MyColors.lightGrey, size: 16),
+                    Icon(Icons.chevron_right,
+                        color: MyColors.lightGrey, size: 16),
                   ],
                 ),
               ],
@@ -254,7 +296,8 @@ class CarDetailsScreen extends StatelessWidget {
             title: Text(selectedLocation ?? car.location,
                 style:
                     const TextStyle(color: MyColors.lightYellow, fontSize: 14)),
-            trailing: const Icon(Icons.chevron_right, color: MyColors.lightGrey),
+            trailing:
+                const Icon(Icons.chevron_right, color: MyColors.lightGrey),
           ),
           const SizedBox(height: 16),
           Padding(
@@ -272,15 +315,13 @@ class CarDetailsScreen extends StatelessWidget {
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
-                  border:
-                      Border.all(color: MyColors.darkGrey, width: 1)),
+                  border: Border.all(color: MyColors.darkGrey, width: 1)),
               child: Column(
                 children: const [
                   _BulletItem(text: 'No repainted parts'),
                   _BulletItem(text: 'No mechanical problems'),
                   _BulletItem(
-                      text:
-                          'New maintenance in the authorized service center'),
+                      text: 'New maintenance in the authorized service center'),
                   _BulletItem(text: 'Car in warranty'),
                   _BulletItem(text: 'New front and back tires'),
                   _BulletItem(text: 'New front and rear brake pads'),
@@ -304,10 +345,12 @@ class CarDetailsScreen extends StatelessWidget {
           Text(
             'EGP ${car.pricePerDay} Per Day',
             style: const TextStyle(
-                color: MyColors.orange, fontSize: 18, fontWeight: FontWeight.bold),
+                color: MyColors.orange,
+                fontSize: 18,
+                fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
-          Text('${car.pricePerDay * bookingDays} Total',
+          Text('${car.pricePerDay * bookingDays!} Total',
               style: const TextStyle(color: MyColors.lightYellow)),
           const SizedBox(height: 16),
           const Divider(color: MyColors.darkGrey),
@@ -361,8 +404,8 @@ class CarDetailsScreen extends StatelessWidget {
         ),
         Divider(color: MyColors.darkGrey, height: 1),
         ListTile(
-          title:
-              Text('Consumables', style: TextStyle(color: MyColors.lightYellow)),
+          title: Text('Consumables',
+              style: TextStyle(color: MyColors.lightYellow)),
           trailing: Icon(Icons.chevron_right, color: MyColors.lightGrey),
         ),
       ],
@@ -383,10 +426,11 @@ class _BulletItem extends StatelessWidget {
           const Icon(Icons.check, color: MyColors.orange, size: 16),
           const SizedBox(width: 8),
           Expanded(
-            child: Text(text, style: const TextStyle(color: MyColors.lightGrey)),
+            child:
+                Text(text, style: const TextStyle(color: MyColors.lightGrey)),
           ),
         ],
       ),
     );
   }
-} 
+}

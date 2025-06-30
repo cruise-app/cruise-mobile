@@ -11,14 +11,52 @@ class RentalService {
       Map<String, dynamic> query) async {
     try {
       final response = await _apiService.get(
-        endPoint: '/api/rentals',
+        endPoint: 'api/rentals/getCars', // Remove leading slash
         data: query,
       );
-      final data = response.data as List<dynamic>;
-      final cars = data.map((e) => CarModel.fromJson(e)).toList();
+      print("Response status: ${response.statusCode}");
+      print("Response data: ${response.data}");
+
+      // Check if the response indicates success
+      if (response.statusCode != 200) {
+        return Left(Failure(
+            message: response.statusMessage ?? 'Failed to retrieve cars'));
+      }
+
+      // Handle different response structures
+      List<dynamic> carsData;
+      if (response.data is Map<String, dynamic>) {
+        // If response has a 'data' field
+        if (response.data.containsKey('data')) {
+          carsData = response.data['data'] as List<dynamic>;
+        }
+        // If response has a 'cars' field
+        else if (response.data.containsKey('cars')) {
+          carsData = response.data['cars'] as List<dynamic>;
+        }
+        // If the entire response.data is the cars array
+        else {
+          return Left(Failure(message: 'Unexpected response format'));
+        }
+      }
+      // If response.data is directly an array
+      else if (response.data is List) {
+        carsData = response.data as List<dynamic>;
+      } else {
+        return Left(Failure(message: 'Invalid response format'));
+      }
+
+      print("Cars data length: ${carsData.length}");
+
+      final cars = carsData
+          .map((e) => CarModel.fromJson(e as Map<String, dynamic>))
+          .toList();
+
+      print("Parsed cars count: ${cars.length}");
       return Right(cars);
     } catch (e) {
-      return Left(Failure(message: e.toString()));
+      print("Error in getAvailableCars: $e");
+      return Left(Failure(message: "Failed to fetch cars: ${e.toString()}"));
     }
   }
 
@@ -44,13 +82,15 @@ class RentalService {
     }
   }
 
-  Future<Either<Failure, List<Map<String, dynamic>>>> getReservations(String plateNumber) async {
+  Future<Either<Failure, List<Map<String, dynamic>>>> getReservations(
+      String plateNumber) async {
     try {
-      final response = await _apiService.get(endPoint: '/api/rentals/$plateNumber/reservations');
+      final response = await _apiService.get(
+          endPoint: '/api/rentals/$plateNumber/reservations');
       final list = List<Map<String, dynamic>>.from(response.data);
       return Right(list);
     } catch (e) {
       return Left(Failure(message: e.toString()));
     }
   }
-} 
+}

@@ -1,50 +1,84 @@
 class CarModel {
+  final String id; // Added for _id
   final String plateNumber;
   final String name;
   final String category;
-  final String imagePath; // local asset for now
-  final int pricePerDay;
-  final int totalPrice;
+  final String imagePath; // Maps to imageUrl
+  final int pricePerDay; // Maps to dailyRate
+  final int totalPrice; // Optional, as it may be calculated
   final String transmission;
   final String description;
-  final String location;
-
-  /// Average user rating out of 5.0
+  final String location; // Stringified GeoJSON coordinates
   final double rating;
+  final String ownerId; // Added for ownerId
+  final bool isNegotiable; // Added for isNegotiable
+  final String insuranceTerms; // Added for insuranceTerms
+  final bool isAvailable; // Added for isAvailable
+  final List<String> features; // Added for features
+  final String fuelType; // Added for fuelType
+  final int? year; // Added for year, nullable
+  final int totalRentals; // Added for totalRentals
+  final DateTime createdAt; // Added for createdAt
+  final DateTime updatedAt; // Added for updatedAt
 
-  const CarModel({
+  CarModel({
+    this.id = '',
     required this.plateNumber,
     required this.name,
-    required this.category,
-    required this.imagePath,
+    this.category = 'Standard',
+    this.imagePath = 'https://picsum.photos/800/400',
     required this.pricePerDay,
     required this.totalPrice,
-    required this.transmission,
-    this.description =
-        '3rd Category - 20,550 KM - Automatic - 2000CC - Yellow - License Valid to 30 / 06 / 2026',
-    this.location = 'Cairo Festival City, New Cairo, Egypt',
-    this.rating = 4.8,
-  });
+    this.transmission = 'Automatic',
+    this.description = 'Car description not available',
+    this.location = 'Location not specified',
+    this.rating = 4.5,
+    this.ownerId = '',
+    this.isNegotiable = false,
+    this.insuranceTerms = 'Standard insurance terms apply',
+    this.isAvailable = true,
+    this.features = const [],
+    this.fuelType = 'Petrol',
+    this.year,
+    this.totalRentals = 0,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  })  : createdAt = createdAt ?? DateTime.now(),
+        updatedAt = updatedAt ?? DateTime.now();
 
   factory CarModel.fromJson(Map<String, dynamic> json) {
     return CarModel(
+      id: json['_id'] ?? '',
       plateNumber: json['plateNumber'] ?? '',
-      name: json['model'] ?? json['name'] ?? 'Unknown',
+      name: json['model'] ?? 'Unknown',
       category: json['category'] ?? 'Standard',
-      imagePath: json['imageUrl'] ??
-          'https://images.unsplash.com/photo-1549923746-c502d488b3ea?auto=format&fit=crop&w=800&q=80',
-      pricePerDay: (json['dailyRate'] ?? json['pricePerDay'] ?? 0).toInt(),
+      imagePath: json['imageUrl'] ?? 'https://picsum.photos/800/400',
+      pricePerDay: (json['dailyRate'] ?? 0).toInt(),
       totalPrice: (json['totalPrice'] ?? json['dailyRate'] ?? 0).toInt(),
       transmission: json['transmission'] ?? 'Automatic',
-      description: json['description'] ?? '',
-      location: json['locationName'] ?? _stringifyLocation(json['location']),
+      description: json['description'] ??
+          '3rd Category - 20,550 KM - Automatic - 2000CC - Yellow - License Valid to 30 / 06 / 2026',
+      location: _stringifyLocation(json['location']),
       rating: (json['rating'] ?? 4.5).toDouble(),
+      ownerId: json['ownerId'] ?? '',
+      isNegotiable: json['isNegotiable'] ?? false,
+      insuranceTerms: json['insuranceTerms'] ?? '',
+      isAvailable: json['isAvailable'] ?? true,
+      features: List<String>.from(json['features'] ?? []),
+      fuelType: json['fuelType'] ?? 'Petrol',
+      year: json['year'] != null ? json['year'].toInt() : null,
+      totalRentals: (json['totalRentals'] ?? 0).toInt(),
+      createdAt:
+          DateTime.parse(json['createdAt'] ?? DateTime.now().toIso8601String()),
+      updatedAt:
+          DateTime.parse(json['updatedAt'] ?? DateTime.now().toIso8601String()),
     );
   }
 
   Map<String, dynamic> toJson() => {
+        '_id': id,
         'plateNumber': plateNumber,
-        'name': name,
+        'model': name,
         'category': category,
         'imageUrl': imagePath,
         'dailyRate': pricePerDay,
@@ -53,14 +87,29 @@ class CarModel {
         'description': description,
         'location': location,
         'rating': rating,
+        'ownerId': ownerId,
+        'isNegotiable': isNegotiable,
+        'insuranceTerms': insuranceTerms,
+        'isAvailable': isAvailable,
+        'features': features,
+        'fuelType': fuelType,
+        'year': year,
+        'totalRentals': totalRentals,
+        'createdAt': createdAt.toIso8601String(),
+        'updatedAt': updatedAt.toIso8601String(),
       };
 
-  /// Converts a `{lat, lng}` object (or any Map) to a readable string.
+  /// Converts a GeoJSON `location` object (or any Map) to a readable string.
   static String _stringifyLocation(dynamic locationField) {
-    if (locationField is Map && locationField.containsKey('lat') && locationField.containsKey('lng')) {
-      return "${locationField['lat']}, ${locationField['lng']}";
+    if (locationField is Map &&
+        locationField.containsKey('coordinates') &&
+        locationField['coordinates'] is List) {
+      final coordinates = locationField['coordinates'] as List;
+      if (coordinates.length >= 2) {
+        return "${coordinates[1]}, ${coordinates[0]}"; // [longitude, latitude] to "latitude, longitude"
+      }
     }
-    // If the field is already a String or null, default casting
-    return locationField?.toString() ?? '';
+    // Fallback for invalid or missing location
+    return locationField?.toString() ?? 'Unknown';
   }
-} 
+}

@@ -112,14 +112,11 @@ abstract class AppRouter {
           }
           return CarDetailsScreen(
             car: car ??
-                const CarModel(
+                CarModel(
                     plateNumber: '',
                     name: 'Unknown',
-                    category: '',
-                    imagePath: '',
                     pricePerDay: 0,
-                    totalPrice: 0,
-                    transmission: ''),
+                    totalPrice: 0),
             bookingDays: days,
             selectedRange: range,
             selectedLocation: locationStr,

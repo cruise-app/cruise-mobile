@@ -7,6 +7,7 @@ import '../../data/models/booking_range.dart';
 import '../../data/services/rental_services.dart';
 import '../../../../util/shared/app_router.dart';
 import 'car_details_screen.dart';
+import 'add_car_for_rent_screen.dart';
 
 class CarListingScreen extends StatefulWidget {
   CarListingScreen({super.key});
@@ -39,41 +40,14 @@ class _CarListingScreenState extends State<CarListingScreen> {
     final either = await service.getAvailableCars({});
     return either.fold((l) {
       // Fallback to local demo data if server fails
-      return [
-        const CarModel(
-            plateNumber: '',
-            name: 'Demo Sedan',
-            category: 'Sedan',
-            imagePath:
-                'https://images.unsplash.com/photo-1517142089942-ba376ce32a0e?auto=format&fit=crop&w=800&q=80',
-            pricePerDay: 2000,
-            totalPrice: 10000,
-            transmission: 'Automatic'),
-      ];
+      return [];
     }, (r) {
+      print("I got bro ${r.length}");
       // If the backend returns an empty list, show demo cars for a richer UI preview.
       if (r.isEmpty) {
-        return [
-          const CarModel(
-              plateNumber: '',
-              name: 'Demo Hatchback',
-              category: 'Compact',
-              imagePath:
-                  'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=800&q=80',
-              pricePerDay: 1500,
-              totalPrice: 7500,
-              transmission: 'Automatic'),
-          const CarModel(
-              plateNumber: '',
-              name: 'Demo EV',
-              category: 'Electric',
-              imagePath:
-                  'https://images.unsplash.com/photo-1593941707874-ef25b8b4a92b?auto=format&fit=crop&w=800&q=80',
-              pricePerDay: 1800,
-              totalPrice: 9000,
-              transmission: 'Automatic'),
-        ];
+        return [];
       }
+      print("I got bro ${r.length}");
       return r;
     });
   }
@@ -90,6 +64,20 @@ class _CarListingScreenState extends State<CarListingScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: MyColors.black,
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const AddCarForRentScreen(),
+            ),
+          );
+        },
+        backgroundColor: MyColors.orange,
+        foregroundColor: MyColors.black,
+        icon: const Icon(Icons.add),
+        label: const Text('Add Car'),
+      ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -107,7 +95,8 @@ class _CarListingScreenState extends State<CarListingScreen> {
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(
-                          child: CircularProgressIndicator(color: MyColors.orange));
+                          child: CircularProgressIndicator(
+                              color: MyColors.orange));
                     } else if (snapshot.hasError) {
                       return Center(
                         child: Text('Error: \\${snapshot.error}',
@@ -135,9 +124,9 @@ class _CarListingScreenState extends State<CarListingScreen> {
                                 final int days = _bookingRange == null
                                     ? 1
                                     : (_bookingRange!.end
-                                                .difference(_bookingRange!.start)
-                                                .inDays)
-                                            .clamp(1, 365);
+                                            .difference(_bookingRange!.start)
+                                            .inDays)
+                                        .clamp(1, 365);
                                 return CarCardWidget(
                                   car: filtered[index],
                                   bookingDays: days,
@@ -190,14 +179,16 @@ class _CarListingScreenState extends State<CarListingScreen> {
               children: [
                 GestureDetector(
                   onTap: () async {
-                    final result = await context.push('/location');
+                    final result =
+                        await context.push(AppRouter.kLocationSelectionScreen);
                     if (result is String) {
                       setState(() => _location = result);
                     }
                   },
                   child: Row(
                     children: [
-                      const Icon(Icons.search, color: MyColors.lightYellow, size: 16),
+                      const Icon(Icons.search,
+                          color: MyColors.lightYellow, size: 16),
                       const SizedBox(width: 6),
                       Text(
                         _location,
@@ -211,7 +202,8 @@ class _CarListingScreenState extends State<CarListingScreen> {
                 const SizedBox(height: 6),
                 GestureDetector(
                   onTap: () async {
-                    final result = await context.push('/booking');
+                    final result =
+                        await context.push(AppRouter.kCarBookingScreen);
                     if (result is BookingRange) {
                       setState(() => _bookingRange = result);
                     }
@@ -256,7 +248,8 @@ class _CarListingScreenState extends State<CarListingScreen> {
               focusColor: Colors.transparent,
               overlayColor: MaterialStateProperty.all(Colors.transparent),
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                 decoration: BoxDecoration(
                   color: isSelected ? MyColors.orange : Colors.transparent,
                   borderRadius: BorderRadius.circular(20),
@@ -305,4 +298,4 @@ class _CarListingScreenState extends State<CarListingScreen> {
         '${end.day} ${months[end.month - 1]}. ${end.hour.toString().padLeft(2, '0')}:${end.minute.toString().padLeft(2, '0')}';
     return '$startStr  ->  $endStr';
   }
-} 
+}
